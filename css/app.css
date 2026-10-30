@@ -223,15 +223,32 @@ html.reduce-motion .bunny.leave{transition:none}
   box-shadow:inset 0 -20px 40px rgba(180,130,60,.10);pointer-events:none;
 }
 .sand-fill{
-  position:absolute;left:0;right:0;bottom:0;height:0%;
+  position:absolute;left:0;right:0;bottom:0;height:0%;z-index:1;
   background:linear-gradient(180deg,var(--sand-2),var(--sand));
+}
+/* 칸을 하나 지날 때마다 모래 표면이 한 번 출렁인다 */
+.sand-fill.pulse::before{animation:ripple .8s ease-out}
+@keyframes ripple{
+  0%{transform:scaleY(1)}
+  35%{transform:scaleY(1.4);filter:brightness(1.05)}
+  100%{transform:scaleY(1)}
 }
 .sand-fill::before{
   content:"";position:absolute;left:-10%;right:-10%;top:-14px;height:22px;border-radius:50%;
   background:var(--sand-2);
 }
+/* 눈금: 모래에 덮이면 사라진다. 남은 칸 수 = 눈에 보이는 줄 수.
+   5~7세는 연속된 높이보다 "몇 개 남았나"를 훨씬 잘 센다.
+   모래보다 아래(z-index 0)에 두는 것이 핵심 — 위에 두면 전부 보여서 셀 수 없다. */
+.jar-ticks{position:absolute;inset:0;pointer-events:none;z-index:0}
+.jar-ticks i{
+  position:absolute;left:11%;right:11%;height:3px;border-radius:2px;
+  background:rgba(146,94,32,.40);
+}
+html[data-theme="dark"] .jar-ticks i{background:rgba(243,235,224,.20)}
+
 .bunny{
-  position:absolute;left:50%;bottom:0;
+  position:absolute;left:50%;bottom:0;z-index:2;
   font-size:clamp(46px,13vw,68px);line-height:1;
   transform:translate(-50%,14%);
   filter:drop-shadow(0 6px 10px rgba(140,100,50,.18));
@@ -564,7 +581,7 @@ html[data-theme="dark"] .jar{
 html[data-theme="dark"] .jar::after{box-shadow:inset 0 -20px 40px rgba(0,0,0,.35)}
 html[data-theme="dark"] .sand-fill{background:linear-gradient(180deg,#C98A2E,#8E5F1C)}
 html[data-theme="dark"] .kid-exit{background:rgba(243,235,224,.10);color:var(--ink-2)}
-html[data-theme="dark"] .door{opacity:.55}
+html[data-theme="dark"] .door{filter:drop-shadow(0 4px 8px rgba(0,0,0,.4)) saturate(.85)}
 
 /* 아이 화면 한 줄 안내 — 아이가 아니라 부모가 읽는 글씨 */
 .kid-cue{

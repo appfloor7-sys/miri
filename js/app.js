@@ -784,6 +784,7 @@
   let endPanelTimer = null;
   let endMode = 'normal';
   let extendUsed = false;
+  let endTarget = null;
   let routineRun = null;
   let wakeLock = null;
 
@@ -850,12 +851,39 @@
     return mode === 'during' ? minutes + '분 안에' : minutes + '분 뒤';
   }
 
+  /* 눈금 간격. 1분에 하나면 20분에서 8px까지 좁아져 셀 수 없다. */
+  const tickStep = m => (m <= 15 ? 1 : m <= 30 ? 2 : 5);
+
+  /* 눈금은 반드시 모래와 같은 좌표계를 써야 한다.
+     모래는 병의 FILL_MAX까지만 차므로, 눈금도 FILL_MAX 기준으로 놓는다. */
+  function buildTicks(minutes) {
+    const box = $('#jar-ticks');
+    const step = tickStep(minutes);
+    const marks = [];
+    for (let m = step; m < minutes; m += step) marks.push(m);
+    box.innerHTML = marks.map(m =>
+      `<i style="bottom:${(FILL_MAX * (m / minutes) * 100).toFixed(2)}%"></i>`
+    ).join('');
+  }
+
+  /* 칸을 하나 지날 때마다 모래 표면이 한 번 출렁인다.
+     사라진 눈금을 반짝여봐야 모래에 덮여 안 보인다. 움직이는 건 표면이다. */
+  function pulseEdge() {
+    if (reduceMotion.matches) return;
+    const sand = $('#sand');
+    sand.classList.remove('pulse');
+    void sand.offsetWidth;
+    sand.classList.add('pulse');
+    setTimeout(() => sand.classList.remove('pulse'), 850);
+  }
+
   function paintKid() {
     $('#sand').style.height = fillPct(100);
     $('#bunny').style.bottom = fillPct(100);
     $('#bunny').className = 'bunny';
     $('#bunny').textContent = '🐰';
     $('#door').className = 'door';
+    buildTicks(timer ? timer.minutes : 0);
     $('#end-panel').className = 'end-panel';
     $('#kid-wrap').className = 'kid-wrap';
     renderDots();
@@ -888,6 +916,14 @@
 
     $('#sand').style.height = fillPct(pct);
     $('#bunny').style.bottom = fillPct(pct);
+
+    const stepMs = tickStep(timer.minutes) * 60000;
+    const passed = Math.floor((timer.totalMs - remain) / stepMs);
+    if (timer.lastTick === undefined) timer.lastTick = passed;
+    else if (passed > timer.lastTick) {
+      timer.lastTick = passed;
+      pulseEdge();
+    }
 
     // 절반을 지나는 순간: 아이가 "마음의 준비"를 시작할 수 있는 첫 신호.
     // 2분 미만이면 30초 예고와 붙어버리므로 생략한다.
@@ -938,6 +974,8 @@
 
     $('#sand').style.height = fillPct(0);
     $('#bunny').style.bottom = fillPct(0);
+    endTarget = nextThingAfter(t);
+    $('#door').textContent = endTarget.icon;
     $('#door').classList.add('on');
     const bunny = $('#bunny');
     bunny.classList.remove('wave');
@@ -958,18 +996,34 @@
     }, 16000 + delay);
   }
 
+  /* 시간이 다 된 뒤 "무엇이 되었나". 이 한 줄이 이 제품의 목적지다.
+     부모는 '다음에 뭐가 오는지'를 알아야 아이에게 말해줄 수 있다. */
+  function nextThingAfter(t) {
+    const hasNext = routineRun && routineRun.index < routineRun.routine.steps.length - 1;
+    if (hasNext) {
+      const s = routineRun.routine.steps[routineRun.index + 1];
+      return { icon: s.icon, label: s.label };
+    }
+    if (t.mode === 'during') return { icon: t.icon, label: t.label };
+    const nx = S.nextPreset();
+    return nx ? { icon: nx.icon, label: nx.label } : { icon: '✨', label: '다음' };
+  }
+
   function setupEndPanel(ended) {
     const mode = ended && ended.mode === 'during' ? 'during' : 'until';
+    const target = endTarget || { icon: '✨', label: '다음' };
     const hasNext = routineRun && routineRun.index < routineRun.routine.steps.length - 1;
     if (hasNext) {
       endMode = 'routine';
       const nextStep = routineRun.routine.steps[routineRun.index + 1];
-      $('#end-hint').textContent = '다음 단계';
+      $('#end-hint').textContent = `다음은 ${target.icon} ${target.label}`;
       $('#end-extend').textContent = '여기서 그만';
       $('#end-done').textContent = '다음: ' + nextStep.label;
     } else {
       endMode = 'normal';
-      $('#end-hint').textContent = mode === 'during' ? '끝났어요' : '이제 시작';
+      $('#end-hint').textContent = mode === 'during'
+        ? `${target.icon} ${target.label} 끝났어요`
+        : `${target.icon} 이제 ${target.label}`;
       $('#end-extend').textContent = extendUsed ? '3분 더 (사용함)' : '3분 더';
       $('#end-extend').disabled = extendUsed;
       $('#end-done').textContent = routineRun

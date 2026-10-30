@@ -240,15 +240,32 @@ html.reduce-motion .bunny.leave{transition:none}
   box-shadow:inset 0 -20px 40px rgba(180,130,60,.10);pointer-events:none;
 }
 .sand-fill{
-  position:absolute;left:0;right:0;bottom:0;height:0%;
+  position:absolute;left:0;right:0;bottom:0;height:0%;z-index:1;
   background:linear-gradient(180deg,var(--sand-2),var(--sand));
+}
+/* 칸을 하나 지날 때마다 모래 표면이 한 번 출렁인다 */
+.sand-fill.pulse::before{animation:ripple .8s ease-out}
+@keyframes ripple{
+  0%{transform:scaleY(1)}
+  35%{transform:scaleY(1.4);filter:brightness(1.05)}
+  100%{transform:scaleY(1)}
 }
 .sand-fill::before{
   content:"";position:absolute;left:-10%;right:-10%;top:-14px;height:22px;border-radius:50%;
   background:var(--sand-2);
 }
+/* 눈금: 모래에 덮이면 사라진다. 남은 칸 수 = 눈에 보이는 줄 수.
+   5~7세는 연속된 높이보다 "몇 개 남았나"를 훨씬 잘 센다.
+   모래보다 아래(z-index 0)에 두는 것이 핵심 — 위에 두면 전부 보여서 셀 수 없다. */
+.jar-ticks{position:absolute;inset:0;pointer-events:none;z-index:0}
+.jar-ticks i{
+  position:absolute;left:11%;right:11%;height:3px;border-radius:2px;
+  background:rgba(146,94,32,.40);
+}
+html[data-theme="dark"] .jar-ticks i{background:rgba(243,235,224,.20)}
+
 .bunny{
-  position:absolute;left:50%;bottom:0;
+  position:absolute;left:50%;bottom:0;z-index:2;
   font-size:clamp(46px,13vw,68px);line-height:1;
   transform:translate(-50%,14%);
   filter:drop-shadow(0 6px 10px rgba(140,100,50,.18));
@@ -581,7 +598,7 @@ html[data-theme="dark"] .jar{
 html[data-theme="dark"] .jar::after{box-shadow:inset 0 -20px 40px rgba(0,0,0,.35)}
 html[data-theme="dark"] .sand-fill{background:linear-gradient(180deg,#C98A2E,#8E5F1C)}
 html[data-theme="dark"] .kid-exit{background:rgba(243,235,224,.10);color:var(--ink-2)}
-html[data-theme="dark"] .door{opacity:.55}
+html[data-theme="dark"] .door{filter:drop-shadow(0 4px 8px rgba(0,0,0,.4)) saturate(.85)}
 
 /* 아이 화면 한 줄 안내 — 아이가 아니라 부모가 읽는 글씨 */
 .kid-cue{
@@ -882,6 +899,7 @@ html[data-theme="dark"] .kid-cue{color:rgba(243,235,224,.85);background:rgba(243
     <div class="routine-dots" id="routine-dots"></div>
     <div class="jar" id="jar">
       <div class="sand-fill" id="sand"></div>
+      <div class="jar-ticks" id="jar-ticks" aria-hidden="true"></div>
       <div class="bunny" id="bunny">🐰</div>
       <div class="door" id="door">🚪</div>
     </div>
@@ -2514,6 +2532,7 @@ const MiriStore = (() => {
   let endPanelTimer = null;
   let endMode = 'normal';
   let extendUsed = false;
+  let endTarget = null;
   let routineRun = null;
   let wakeLock = null;
 
@@ -2580,12 +2599,39 @@ const MiriStore = (() => {
     return mode === 'during' ? minutes + '분 안에' : minutes + '분 뒤';
   }
 
+  /* 눈금 간격. 1분에 하나면 20분에서 8px까지 좁아져 셀 수 없다. */
+  const tickStep = m => (m <= 15 ? 1 : m <= 30 ? 2 : 5);
+
+  /* 눈금은 반드시 모래와 같은 좌표계를 써야 한다.
+     모래는 병의 FILL_MAX까지만 차므로, 눈금도 FILL_MAX 기준으로 놓는다. */
+  function buildTicks(minutes) {
+    const box = $('#jar-ticks');
+    const step = tickStep(minutes);
+    const marks = [];
+    for (let m = step; m < minutes; m += step) marks.push(m);
+    box.innerHTML = marks.map(m =>
+      `<i style="bottom:${(FILL_MAX * (m / minutes) * 100).toFixed(2)}%"></i>`
+    ).join('');
+  }
+
+  /* 칸을 하나 지날 때마다 모래 표면이 한 번 출렁인다.
+     사라진 눈금을 반짝여봐야 모래에 덮여 안 보인다. 움직이는 건 표면이다. */
+  function pulseEdge() {
+    if (reduceMotion.matches) return;
+    const sand = $('#sand');
+    sand.classList.remove('pulse');
+    void sand.offsetWidth;
+    sand.classList.add('pulse');
+    setTimeout(() => sand.classList.remove('pulse'), 850);
+  }
+
   function paintKid() {
     $('#sand').style.height = fillPct(100);
     $('#bunny').style.bottom = fillPct(100);
     $('#bunny').className = 'bunny';
     $('#bunny').textContent = '🐰';
     $('#door').className = 'door';
+    buildTicks(timer ? timer.minutes : 0);
     $('#end-panel').className = 'end-panel';
     $('#kid-wrap').className = 'kid-wrap';
     renderDots();
@@ -2618,6 +2664,14 @@ const MiriStore = (() => {
 
     $('#sand').style.height = fillPct(pct);
     $('#bunny').style.bottom = fillPct(pct);
+
+    const stepMs = tickStep(timer.minutes) * 60000;
+    const passed = Math.floor((timer.totalMs - remain) / stepMs);
+    if (timer.lastTick === undefined) timer.lastTick = passed;
+    else if (passed > timer.lastTick) {
+      timer.lastTick = passed;
+      pulseEdge();
+    }
 
     // 절반을 지나는 순간: 아이가 "마음의 준비"를 시작할 수 있는 첫 신호.
     // 2분 미만이면 30초 예고와 붙어버리므로 생략한다.
@@ -2668,6 +2722,8 @@ const MiriStore = (() => {
 
     $('#sand').style.height = fillPct(0);
     $('#bunny').style.bottom = fillPct(0);
+    endTarget = nextThingAfter(t);
+    $('#door').textContent = endTarget.icon;
     $('#door').classList.add('on');
     const bunny = $('#bunny');
     bunny.classList.remove('wave');
@@ -2688,18 +2744,34 @@ const MiriStore = (() => {
     }, 16000 + delay);
   }
 
+  /* 시간이 다 된 뒤 "무엇이 되었나". 이 한 줄이 이 제품의 목적지다.
+     부모는 '다음에 뭐가 오는지'를 알아야 아이에게 말해줄 수 있다. */
+  function nextThingAfter(t) {
+    const hasNext = routineRun && routineRun.index < routineRun.routine.steps.length - 1;
+    if (hasNext) {
+      const s = routineRun.routine.steps[routineRun.index + 1];
+      return { icon: s.icon, label: s.label };
+    }
+    if (t.mode === 'during') return { icon: t.icon, label: t.label };
+    const nx = S.nextPreset();
+    return nx ? { icon: nx.icon, label: nx.label } : { icon: '✨', label: '다음' };
+  }
+
   function setupEndPanel(ended) {
     const mode = ended && ended.mode === 'during' ? 'during' : 'until';
+    const target = endTarget || { icon: '✨', label: '다음' };
     const hasNext = routineRun && routineRun.index < routineRun.routine.steps.length - 1;
     if (hasNext) {
       endMode = 'routine';
       const nextStep = routineRun.routine.steps[routineRun.index + 1];
-      $('#end-hint').textContent = '다음 단계';
+      $('#end-hint').textContent = `다음은 ${target.icon} ${target.label}`;
       $('#end-extend').textContent = '여기서 그만';
       $('#end-done').textContent = '다음: ' + nextStep.label;
     } else {
       endMode = 'normal';
-      $('#end-hint').textContent = mode === 'during' ? '끝났어요' : '이제 시작';
+      $('#end-hint').textContent = mode === 'during'
+        ? `${target.icon} ${target.label} 끝났어요`
+        : `${target.icon} 이제 ${target.label}`;
       $('#end-extend').textContent = extendUsed ? '3분 더 (사용함)' : '3분 더';
       $('#end-extend').disabled = extendUsed;
       $('#end-done').textContent = routineRun
