@@ -1,5 +1,5 @@
 /* 미리 — 서비스 워커: 오프라인 캐시 + 종료 알림 예약 */
-const CACHE = 'miri-v3'; // 배포할 때마다 올린다
+const CACHE = 'miri-v4'; // 배포할 때마다 올린다
 const ASSETS = [
   './index.html',
   './css/app.css',
@@ -50,14 +50,16 @@ self.addEventListener('fetch', e => {
     return;
   }
 
+  /* 나머지 자산도 네트워크 우선.
+     cache-first면 HTML은 새것, JS는 구것인 조합이 생겨 화면이 어긋난다.
+     3.5초 안에 못 받으면 캐시로 버틴다(오프라인). */
   e.respondWith(
-    caches.match(req).then(hit => {
-      const net = fetch(req).then(res => {
+    fetchWithTimeout(req, 3500)
+      .then(res => {
         if (res && res.ok) caches.open(CACHE).then(c => c.put(req, res.clone())).catch(() => {});
         return res;
-      });
-      return hit || net;
-    }).catch(() => caches.match('./index.html'))
+      })
+      .catch(() => caches.match(req).then(hit => hit || caches.match('./index.html')))
   );
 });
 
