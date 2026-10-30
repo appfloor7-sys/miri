@@ -1438,6 +1438,16 @@
 
     if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
       navigator.serviceWorker.register('sw.js').catch(() => {});
+
+      // 새 워커가 제어를 가져오면 한 번만 새로고침해 최신 화면으로 맞춘다
+      let reloaded = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (reloaded) return;
+        reloaded = true;
+        if (sessionStorage.getItem('miri.reloaded') === '1') return;
+        sessionStorage.setItem('miri.reloaded', '1');
+        location.reload();
+      });
     }
   }
 
