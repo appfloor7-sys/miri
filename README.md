@@ -7,6 +7,12 @@
 
 ---
 
+## 🔗 지금 바로 (폰에서 열기)
+
+**https://appfloor7-sys.github.io/miri/**
+
+HTTPS라서 폰 브라우저에서 열고 **홈 화면에 추가**하면 앱처럼 설치됩니다.
+
 ## 미리보기 (작업환경별)
 
 ### A. 화면만 빠르게 보기 — `preview/all-screens.png`
