@@ -232,7 +232,7 @@
       if (p) {
         $('#ob-preview-em').textContent = p.icon;
         $('#ob-preview-lb').textContent = p.label;
-        $('#ob-preview-mt').textContent = p.minutes + '분';
+        $('#ob-preview-mt').textContent = useShort(p.minutes, modeOf(p));
       }
       obShow(3);
     });
@@ -270,11 +270,15 @@
 
     const next = S.nextPreset(now);
     if (next) {
+      const mode = modeOf(next);
       $('#hero-em').textContent = next.icon;
       $('#hero-lb').textContent = next.label;
-      $('#hero-sub').textContent = next.minutes + '분을 보여주고 시작하세요.';
-      $('#hero-start').onclick = () => startTimer({ label: next.label, icon: next.icon, minutes: next.minutes, presetKey: next.key });
-      $('#hero-change').onclick = () => openSheet(next.label, min => startTimer({ label: next.label, icon: next.icon, minutes: min, presetKey: next.key }));
+      $('#hero-sub').textContent = useLine(next.label, next.minutes, mode);
+      $('#hero-start').onclick = () => startTimer({ label: next.label, icon: next.icon, minutes: next.minutes, presetKey: next.key, mode });
+      $('#hero-change').onclick = () => openSheet({
+        label: next.label, minutes: next.minutes, mode,
+        onPick: (min, m) => startTimer({ label: next.label, icon: next.icon, minutes: min, presetKey: next.key, mode: m })
+      });
     }
 
     const usage = S.timerUsage();
@@ -299,7 +303,7 @@
         ${p.pinned ? '<span class="pin">자주</span>' : ''}
         <span class="em">${esc(p.icon)}</span>
         <span class="lb">${esc(p.label)}</span>
-        <span class="mt" data-min="${esc(p.key)}">${p.minutes}분 · ${esc(p.time)}</span>
+        <span class="mt" data-min="${esc(p.key)}">${esc(p.time)} ${modeOf(p) === 'during' ? '· ' + p.minutes + '분 동안' : '시작 · ' + p.minutes + '분 전에'}</span>
         <span class="go">시계 켜기 →</span>
       </button>
     `).join('');
@@ -310,10 +314,13 @@
         if (!p) return;
         if (e.target.closest('[data-min]')) {
           e.stopPropagation();
-          openSheet(p.label, min => startTimer({ label: p.label, icon: p.icon, minutes: min, presetKey: p.key }));
+          openSheet({
+            label: p.label, minutes: p.minutes, mode: modeOf(p),
+            onPick: (min, m) => startTimer({ label: p.label, icon: p.icon, minutes: min, presetKey: p.key, mode: m })
+          });
           return;
         }
-        startTimer({ label: p.label, icon: p.icon, minutes: p.minutes, presetKey: p.key });
+        startTimer({ label: p.label, icon: p.icon, minutes: p.minutes, presetKey: p.key, mode: modeOf(p) });
       });
     });
 
@@ -403,25 +410,44 @@
 
   /* ================= 시간 선택 시트 ================= */
 
-  let sheetCb = null;
 
-  function openSheet(title, cb) {
-    sheetCb = cb;
-    $('#sheet-title').textContent = title + ' — 몇 분?';
+  let sheetState = null;
+
+  function openSheet({ label, minutes, mode, onPick }) {
+    sheetState = { label, mode: modeOf({ mode }), onPick };
+    $('#sheet-title').textContent = label + ' — 몇 분?';
     $('#sheet-custom').value = '';
+    paintSheetMode();
     $('#sheet').classList.add('on');
   }
 
+  function paintSheetMode() {
+    if (!sheetState) return;
+    const { label, mode } = sheetState;
+    $$('#sheet-mode button').forEach(b => b.classList.toggle('on', b.dataset.mode === mode));
+    $('#sheet-mode-note').textContent = mode === 'during'
+      ? label + '에 주는 시간이에요. 시간이 다 되면 끝났다고 알려줘요.'
+      : label + '이 시작되기까지 남은 시간이에요. 아이는 이만큼 더 하고 움직이면 돼요.';
+  }
+
+  $$('#sheet-mode button').forEach(b => {
+    b.addEventListener('click', () => {
+      if (!sheetState) return;
+      sheetState.mode = b.dataset.mode;
+      paintSheetMode();
+    });
+  });
+
   function closeSheet() {
     $('#sheet').classList.remove('on');
-    sheetCb = null;
+    sheetState = null;
   }
 
   function sheetPick(min) {
-    const cb = sheetCb;
+    const st = sheetState;
     const m = S.clampMinutes(min);
     closeSheet();
-    if (cb) cb(m);
+    if (st) st.onPick(m, st.mode);
   }
 
   /* ================= 카드 ================= */
@@ -641,12 +667,15 @@
 
     $('#preset-settings').innerHTML = S.state.presets.map(p => `
       <div class="set-item">
-        <span class="k">${esc(p.icon)} ${esc(p.label)}</span>
+        <span class="k">${esc(p.icon)} ${esc(p.label)}
+          <small>${modeOf(p) === 'during' ? p.label + '에 주는 시간' : p.label + ' 시작까지'}</small>
+        </span>
         <div class="row wrap" style="gap:8px">
           <input class="time-input" type="time" value="${esc(p.time)}" data-key="${esc(p.key)}" aria-label="${esc(p.label)} 시간">
           <div class="seg" data-seg="${esc(p.key)}">
             ${[3, 5, 10, 15].map(m => `<button data-min="${m}" class="${p.minutes === m ? 'on' : ''}">${m}</button>`).join('')}
           </div>
+          <button class="btn ghost sm" data-mode="${esc(p.key)}">${modeOf(p) === 'during' ? '시작까지로' : '하는 동안으로'}</button>
           ${p.custom ? `<button class="btn ghost sm" data-remove="${esc(p.key)}">삭제</button>` : ''}
         </div>
       </div>
@@ -657,6 +686,17 @@
         if (!inp.value) return;
         S.updatePreset(inp.dataset.key, { time: inp.value });
         toast('시간을 바꿨어요');
+      });
+    });
+
+    $$('#preset-settings [data-mode]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const p = S.presetByKey(btn.dataset.mode);
+        if (!p) return;
+        const next = modeOf(p) === 'during' ? 'until' : 'during';
+        S.updatePreset(p.key, { mode: next });
+        renderSettings();
+        toast(next === 'during' ? '하는 동안으로 바꿨어요' : '시작까지로 바꿨어요');
       });
     });
 
@@ -771,6 +811,7 @@
       endsAt: start + opts.minutes * 60000,
       totalMs: opts.minutes * 60000,
       presetKey: opts.presetKey || null,
+      mode: opts.mode === 'during' ? 'during' : 'until',
       routineId: opts.routineId || null,
       stepIndex: opts.stepIndex === undefined ? null : opts.stepIndex,
       childId: S.state.activeChildId,
@@ -792,6 +833,21 @@
 
     ticking = setInterval(tick, 100);
     tick();
+  }
+
+  /* 용도에 따라 말이 달라야 한다.
+     'until'  = 그 일이 시작되기까지 → "10분 더 놀고 시작해요"
+     'during' = 그 일에 주어진 시간   → "10분 안에 끝내요" */
+  function modeOf(x) { return x && x.mode === 'during' ? 'during' : 'until'; }
+
+  function useLine(label, minutes, mode) {
+    return mode === 'during'
+      ? label + ' ' + minutes + '분 안에 끝내요.'
+      : minutes + '분 더 하고 ' + label + ' 시작해요.';
+  }
+
+  function useShort(minutes, mode) {
+    return mode === 'during' ? minutes + '분 안에' : minutes + '분 뒤';
   }
 
   function paintKid() {
@@ -819,7 +875,8 @@
     S.savePending({
       label: timer.label, icon: timer.icon, minutes: timer.minutes,
       start: timer.start, endsAt: timer.endsAt, totalMs: timer.totalMs,
-      presetKey: timer.presetKey, routineId: timer.routineId, stepIndex: timer.stepIndex,
+      presetKey: timer.presetKey, mode: timer.mode,
+      routineId: timer.routineId, stepIndex: timer.stepIndex,
       childId: timer.childId, warned: timer.warned, isTrial: timer.isTrial
     });
   }
@@ -892,7 +949,7 @@
     const delay = reduceMotion.matches ? 0 : 1200;
     setTimeout(() => {
       endPanelLogId = log.id;
-      setupEndPanel();
+      setupEndPanel(t);
       $('#end-panel').classList.add('on');
     }, delay);
 
@@ -901,7 +958,8 @@
     }, 16000 + delay);
   }
 
-  function setupEndPanel() {
+  function setupEndPanel(ended) {
+    const mode = ended && ended.mode === 'during' ? 'during' : 'until';
     const hasNext = routineRun && routineRun.index < routineRun.routine.steps.length - 1;
     if (hasNext) {
       endMode = 'routine';
@@ -911,10 +969,12 @@
       $('#end-done').textContent = '다음: ' + nextStep.label;
     } else {
       endMode = 'normal';
-      $('#end-hint').textContent = '부모님만';
+      $('#end-hint').textContent = mode === 'during' ? '끝났어요' : '이제 시작';
       $('#end-extend').textContent = extendUsed ? '3분 더 (사용함)' : '3분 더';
       $('#end-extend').disabled = extendUsed;
-      $('#end-done').textContent = routineRun ? '다 끝났어요' : '잘 넘어갔어요';
+      $('#end-done').textContent = routineRun
+        ? '다 끝났어요'
+        : (mode === 'during' ? '다 했어요' : '잘 넘어갔어요');
     }
   }
 
@@ -966,6 +1026,7 @@
     const step = routineRun.routine.steps[routineRun.index];
     startTimer({
       label: step.label, icon: step.icon, minutes: step.minutes,
+      mode: step.mode === 'until' ? 'until' : 'during',
       routineId: routineRun.routine.id, stepIndex: routineRun.index,
       fromRoutine: true
     });
@@ -982,7 +1043,8 @@
       timer = {
         label: p.label, icon: p.icon, minutes: p.minutes, start: p.start,
         endsAt: p.endsAt, totalMs: p.totalMs || p.minutes * 60000,
-        presetKey: p.presetKey, routineId: p.routineId, stepIndex: p.stepIndex,
+        presetKey: p.presetKey, mode: p.mode === 'during' ? 'during' : 'until',
+        routineId: p.routineId, stepIndex: p.stepIndex,
         childId: p.childId || S.state.activeChildId,
         warned: now <= p.endsAt - 30000,
         midDone: now <= p.endsAt - (p.totalMs || p.minutes * 60000) / 2,

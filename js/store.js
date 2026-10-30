@@ -10,10 +10,12 @@ const MiriStore = (() => {
   const FREE = { timersPerDay: 5, customPresets: 2, recordDays: 7, notifyPerDay: 6 };
 
   const PRESET_BANK = [
-    { key: 'go', label: '등원', icon: '🎒', minutes: 10, time: '07:40' },
-    { key: 'home', label: '하원', icon: '🏠', minutes: 10, time: '16:00' },
-    { key: 'bath', label: '목욕', icon: '🛁', minutes: 10, time: '19:30' },
-    { key: 'sleep', label: '잠자리', icon: '🌙', minutes: 15, time: '20:30' }
+    // mode: 'until' = 그 일이 시작되기까지 남은 시간 (10분 더 놀고 목욕)
+    //       'during' = 그 일에 주어진 시간 (목욕 10분 안에 끝내기)
+    { key: 'go', label: '등원', icon: '🎒', minutes: 10, time: '07:40', mode: 'until' },
+    { key: 'home', label: '하원', icon: '🏠', minutes: 10, time: '16:00', mode: 'until' },
+    { key: 'bath', label: '목욕', icon: '🛁', minutes: 10, time: '19:30', mode: 'until' },
+    { key: 'sleep', label: '잠자리', icon: '🌙', minutes: 15, time: '20:30', mode: 'until' }
   ];
 
   const CARD_SETS = [
@@ -37,15 +39,15 @@ const MiriStore = (() => {
 
   const ROUTINE_BANK = [
     { id: 'morning', name: '아침 루틴', icon: '🌅', time: '07:20', steps: [
-      { label: '기상', icon: '☀️', minutes: 3 },
-      { label: '아침밥', icon: '🥣', minutes: 15 },
-      { label: '옷 입기', icon: '👕', minutes: 10 },
-      { label: '등원', icon: '🎒', minutes: 5 }
+      { label: '기상', icon: '☀️', minutes: 3, mode: 'during' },
+      { label: '아침밥', icon: '🥣', minutes: 15, mode: 'during' },
+      { label: '옷 입기', icon: '👕', minutes: 10, mode: 'during' },
+      { label: '등원', icon: '🎒', minutes: 5, mode: 'during' }
     ]},
     { id: 'evening', name: '저녁 루틴', icon: '🌙', time: '19:30', steps: [
-      { label: '목욕', icon: '🛁', minutes: 10 },
-      { label: '양치', icon: '🪥', minutes: 3 },
-      { label: '책 읽기', icon: '📖', minutes: 10 }
+      { label: '목욕', icon: '🛁', minutes: 10, mode: 'during' },
+      { label: '양치', icon: '🪥', minutes: 3, mode: 'during' },
+      { label: '책 읽기', icon: '📖', minutes: 10, mode: 'during' }
     ]}
   ];
 
@@ -111,6 +113,7 @@ const MiriStore = (() => {
         minutes: Number(p.minutes) || 10,
         time: p.time || '09:00',
         pinned: !!p.pinned,
+        mode: p.mode === 'during' ? 'during' : 'until',
         custom: false
       }));
     }
@@ -177,6 +180,11 @@ const MiriStore = (() => {
     const out = { ...base, ...st };
     out.presets = Array.isArray(st.presets) && st.presets.length ? st.presets : base.presets;
     out.routines = Array.isArray(st.routines) ? st.routines : base.routines;
+    out.presets = out.presets.map(p => ({ ...p, mode: p.mode === 'during' ? 'during' : 'until' }));
+    out.routines = out.routines.map(r => ({
+      ...r,
+      steps: (r.steps || []).map(st2 => ({ ...st2, mode: st2.mode === 'until' ? 'until' : 'during' }))
+    }));
     out.children = Array.isArray(st.children) && st.children.length ? st.children : base.children;
     out.cards = st.cards && typeof st.cards === 'object' ? st.cards : {};
     out.logs = Array.isArray(st.logs) ? st.logs : [];

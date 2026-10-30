@@ -596,6 +596,14 @@ html[data-theme="dark"] .door{opacity:.55}
 .kid-cue.on{opacity:1;transform:translate(-50%,0)}
 html[data-theme="dark"] .kid-cue{color:rgba(243,235,224,.85);background:rgba(243,235,224,.10)}
 
+/* 시간 시트: 용도 선택 */
+.sheet-mode{margin-top:14px}
+.sheet-mode button{flex:1 1 0;min-height:42px;font-size:13.5px}
+.sheet-mode-note{
+  margin:9px 0 0;font-size:12.5px;line-height:1.55;color:var(--ink-2);font-weight:600;
+  min-height:20px;
+}
+
 </style>
 </head>
 <body>
@@ -918,6 +926,11 @@ html[data-theme="dark"] .kid-cue{color:rgba(243,235,224,.85);background:rgba(243
       <span class="h2" id="sheet-title">몇 분 보여줄까요?</span>
       <span class="muted">숫자는 아이에게 안 보여요</span>
     </div>
+    <div class="seg sheet-mode" id="sheet-mode">
+      <button data-mode="until">시작까지</button>
+      <button data-mode="during">하는 동안</button>
+    </div>
+    <p class="sheet-mode-note" id="sheet-mode-note"></p>
     <div class="sheet-grid" id="sheet-grid">
       <button data-min="1">1분</button>
       <button data-min="3">3분</button>
@@ -962,10 +975,12 @@ const MiriStore = (() => {
   const FREE = { timersPerDay: 5, customPresets: 2, recordDays: 7, notifyPerDay: 6 };
 
   const PRESET_BANK = [
-    { key: 'go', label: '등원', icon: '🎒', minutes: 10, time: '07:40' },
-    { key: 'home', label: '하원', icon: '🏠', minutes: 10, time: '16:00' },
-    { key: 'bath', label: '목욕', icon: '🛁', minutes: 10, time: '19:30' },
-    { key: 'sleep', label: '잠자리', icon: '🌙', minutes: 15, time: '20:30' }
+    // mode: 'until' = 그 일이 시작되기까지 남은 시간 (10분 더 놀고 목욕)
+    //       'during' = 그 일에 주어진 시간 (목욕 10분 안에 끝내기)
+    { key: 'go', label: '등원', icon: '🎒', minutes: 10, time: '07:40', mode: 'until' },
+    { key: 'home', label: '하원', icon: '🏠', minutes: 10, time: '16:00', mode: 'until' },
+    { key: 'bath', label: '목욕', icon: '🛁', minutes: 10, time: '19:30', mode: 'until' },
+    { key: 'sleep', label: '잠자리', icon: '🌙', minutes: 15, time: '20:30', mode: 'until' }
   ];
 
   const CARD_SETS = [
@@ -989,15 +1004,15 @@ const MiriStore = (() => {
 
   const ROUTINE_BANK = [
     { id: 'morning', name: '아침 루틴', icon: '🌅', time: '07:20', steps: [
-      { label: '기상', icon: '☀️', minutes: 3 },
-      { label: '아침밥', icon: '🥣', minutes: 15 },
-      { label: '옷 입기', icon: '👕', minutes: 10 },
-      { label: '등원', icon: '🎒', minutes: 5 }
+      { label: '기상', icon: '☀️', minutes: 3, mode: 'during' },
+      { label: '아침밥', icon: '🥣', minutes: 15, mode: 'during' },
+      { label: '옷 입기', icon: '👕', minutes: 10, mode: 'during' },
+      { label: '등원', icon: '🎒', minutes: 5, mode: 'during' }
     ]},
     { id: 'evening', name: '저녁 루틴', icon: '🌙', time: '19:30', steps: [
-      { label: '목욕', icon: '🛁', minutes: 10 },
-      { label: '양치', icon: '🪥', minutes: 3 },
-      { label: '책 읽기', icon: '📖', minutes: 10 }
+      { label: '목욕', icon: '🛁', minutes: 10, mode: 'during' },
+      { label: '양치', icon: '🪥', minutes: 3, mode: 'during' },
+      { label: '책 읽기', icon: '📖', minutes: 10, mode: 'during' }
     ]}
   ];
 
@@ -1063,6 +1078,7 @@ const MiriStore = (() => {
         minutes: Number(p.minutes) || 10,
         time: p.time || '09:00',
         pinned: !!p.pinned,
+        mode: p.mode === 'during' ? 'during' : 'until',
         custom: false
       }));
     }
@@ -1129,6 +1145,11 @@ const MiriStore = (() => {
     const out = { ...base, ...st };
     out.presets = Array.isArray(st.presets) && st.presets.length ? st.presets : base.presets;
     out.routines = Array.isArray(st.routines) ? st.routines : base.routines;
+    out.presets = out.presets.map(p => ({ ...p, mode: p.mode === 'during' ? 'during' : 'until' }));
+    out.routines = out.routines.map(r => ({
+      ...r,
+      steps: (r.steps || []).map(st2 => ({ ...st2, mode: st2.mode === 'until' ? 'until' : 'during' }))
+    }));
     out.children = Array.isArray(st.children) && st.children.length ? st.children : base.children;
     out.cards = st.cards && typeof st.cards === 'object' ? st.cards : {};
     out.logs = Array.isArray(st.logs) ? st.logs : [];
@@ -1941,7 +1962,7 @@ const MiriStore = (() => {
       if (p) {
         $('#ob-preview-em').textContent = p.icon;
         $('#ob-preview-lb').textContent = p.label;
-        $('#ob-preview-mt').textContent = p.minutes + '분';
+        $('#ob-preview-mt').textContent = useShort(p.minutes, modeOf(p));
       }
       obShow(3);
     });
@@ -1979,11 +2000,15 @@ const MiriStore = (() => {
 
     const next = S.nextPreset(now);
     if (next) {
+      const mode = modeOf(next);
       $('#hero-em').textContent = next.icon;
       $('#hero-lb').textContent = next.label;
-      $('#hero-sub').textContent = next.minutes + '분을 보여주고 시작하세요.';
-      $('#hero-start').onclick = () => startTimer({ label: next.label, icon: next.icon, minutes: next.minutes, presetKey: next.key });
-      $('#hero-change').onclick = () => openSheet(next.label, min => startTimer({ label: next.label, icon: next.icon, minutes: min, presetKey: next.key }));
+      $('#hero-sub').textContent = useLine(next.label, next.minutes, mode);
+      $('#hero-start').onclick = () => startTimer({ label: next.label, icon: next.icon, minutes: next.minutes, presetKey: next.key, mode });
+      $('#hero-change').onclick = () => openSheet({
+        label: next.label, minutes: next.minutes, mode,
+        onPick: (min, m) => startTimer({ label: next.label, icon: next.icon, minutes: min, presetKey: next.key, mode: m })
+      });
     }
 
     const usage = S.timerUsage();
@@ -2008,7 +2033,7 @@ const MiriStore = (() => {
         ${p.pinned ? '<span class="pin">자주</span>' : ''}
         <span class="em">${esc(p.icon)}</span>
         <span class="lb">${esc(p.label)}</span>
-        <span class="mt" data-min="${esc(p.key)}">${p.minutes}분 · ${esc(p.time)}</span>
+        <span class="mt" data-min="${esc(p.key)}">${esc(p.time)} ${modeOf(p) === 'during' ? '· ' + p.minutes + '분 동안' : '시작 · ' + p.minutes + '분 전에'}</span>
         <span class="go">시계 켜기 →</span>
       </button>
     `).join('');
@@ -2019,10 +2044,13 @@ const MiriStore = (() => {
         if (!p) return;
         if (e.target.closest('[data-min]')) {
           e.stopPropagation();
-          openSheet(p.label, min => startTimer({ label: p.label, icon: p.icon, minutes: min, presetKey: p.key }));
+          openSheet({
+            label: p.label, minutes: p.minutes, mode: modeOf(p),
+            onPick: (min, m) => startTimer({ label: p.label, icon: p.icon, minutes: min, presetKey: p.key, mode: m })
+          });
           return;
         }
-        startTimer({ label: p.label, icon: p.icon, minutes: p.minutes, presetKey: p.key });
+        startTimer({ label: p.label, icon: p.icon, minutes: p.minutes, presetKey: p.key, mode: modeOf(p) });
       });
     });
 
@@ -2112,25 +2140,44 @@ const MiriStore = (() => {
 
   /* ================= 시간 선택 시트 ================= */
 
-  let sheetCb = null;
 
-  function openSheet(title, cb) {
-    sheetCb = cb;
-    $('#sheet-title').textContent = title + ' — 몇 분?';
+  let sheetState = null;
+
+  function openSheet({ label, minutes, mode, onPick }) {
+    sheetState = { label, mode: modeOf({ mode }), onPick };
+    $('#sheet-title').textContent = label + ' — 몇 분?';
     $('#sheet-custom').value = '';
+    paintSheetMode();
     $('#sheet').classList.add('on');
   }
 
+  function paintSheetMode() {
+    if (!sheetState) return;
+    const { label, mode } = sheetState;
+    $$('#sheet-mode button').forEach(b => b.classList.toggle('on', b.dataset.mode === mode));
+    $('#sheet-mode-note').textContent = mode === 'during'
+      ? label + '에 주는 시간이에요. 시간이 다 되면 끝났다고 알려줘요.'
+      : label + '이 시작되기까지 남은 시간이에요. 아이는 이만큼 더 하고 움직이면 돼요.';
+  }
+
+  $$('#sheet-mode button').forEach(b => {
+    b.addEventListener('click', () => {
+      if (!sheetState) return;
+      sheetState.mode = b.dataset.mode;
+      paintSheetMode();
+    });
+  });
+
   function closeSheet() {
     $('#sheet').classList.remove('on');
-    sheetCb = null;
+    sheetState = null;
   }
 
   function sheetPick(min) {
-    const cb = sheetCb;
+    const st = sheetState;
     const m = S.clampMinutes(min);
     closeSheet();
-    if (cb) cb(m);
+    if (st) st.onPick(m, st.mode);
   }
 
   /* ================= 카드 ================= */
@@ -2350,12 +2397,15 @@ const MiriStore = (() => {
 
     $('#preset-settings').innerHTML = S.state.presets.map(p => `
       <div class="set-item">
-        <span class="k">${esc(p.icon)} ${esc(p.label)}</span>
+        <span class="k">${esc(p.icon)} ${esc(p.label)}
+          <small>${modeOf(p) === 'during' ? p.label + '에 주는 시간' : p.label + ' 시작까지'}</small>
+        </span>
         <div class="row wrap" style="gap:8px">
           <input class="time-input" type="time" value="${esc(p.time)}" data-key="${esc(p.key)}" aria-label="${esc(p.label)} 시간">
           <div class="seg" data-seg="${esc(p.key)}">
             ${[3, 5, 10, 15].map(m => `<button data-min="${m}" class="${p.minutes === m ? 'on' : ''}">${m}</button>`).join('')}
           </div>
+          <button class="btn ghost sm" data-mode="${esc(p.key)}">${modeOf(p) === 'during' ? '시작까지로' : '하는 동안으로'}</button>
           ${p.custom ? `<button class="btn ghost sm" data-remove="${esc(p.key)}">삭제</button>` : ''}
         </div>
       </div>
@@ -2366,6 +2416,17 @@ const MiriStore = (() => {
         if (!inp.value) return;
         S.updatePreset(inp.dataset.key, { time: inp.value });
         toast('시간을 바꿨어요');
+      });
+    });
+
+    $$('#preset-settings [data-mode]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const p = S.presetByKey(btn.dataset.mode);
+        if (!p) return;
+        const next = modeOf(p) === 'during' ? 'until' : 'during';
+        S.updatePreset(p.key, { mode: next });
+        renderSettings();
+        toast(next === 'during' ? '하는 동안으로 바꿨어요' : '시작까지로 바꿨어요');
       });
     });
 
@@ -2480,6 +2541,7 @@ const MiriStore = (() => {
       endsAt: start + opts.minutes * 60000,
       totalMs: opts.minutes * 60000,
       presetKey: opts.presetKey || null,
+      mode: opts.mode === 'during' ? 'during' : 'until',
       routineId: opts.routineId || null,
       stepIndex: opts.stepIndex === undefined ? null : opts.stepIndex,
       childId: S.state.activeChildId,
@@ -2501,6 +2563,21 @@ const MiriStore = (() => {
 
     ticking = setInterval(tick, 100);
     tick();
+  }
+
+  /* 용도에 따라 말이 달라야 한다.
+     'until'  = 그 일이 시작되기까지 → "10분 더 놀고 시작해요"
+     'during' = 그 일에 주어진 시간   → "10분 안에 끝내요" */
+  function modeOf(x) { return x && x.mode === 'during' ? 'during' : 'until'; }
+
+  function useLine(label, minutes, mode) {
+    return mode === 'during'
+      ? label + ' ' + minutes + '분 안에 끝내요.'
+      : minutes + '분 더 하고 ' + label + ' 시작해요.';
+  }
+
+  function useShort(minutes, mode) {
+    return mode === 'during' ? minutes + '분 안에' : minutes + '분 뒤';
   }
 
   function paintKid() {
@@ -2528,7 +2605,8 @@ const MiriStore = (() => {
     S.savePending({
       label: timer.label, icon: timer.icon, minutes: timer.minutes,
       start: timer.start, endsAt: timer.endsAt, totalMs: timer.totalMs,
-      presetKey: timer.presetKey, routineId: timer.routineId, stepIndex: timer.stepIndex,
+      presetKey: timer.presetKey, mode: timer.mode,
+      routineId: timer.routineId, stepIndex: timer.stepIndex,
       childId: timer.childId, warned: timer.warned, isTrial: timer.isTrial
     });
   }
@@ -2601,7 +2679,7 @@ const MiriStore = (() => {
     const delay = reduceMotion.matches ? 0 : 1200;
     setTimeout(() => {
       endPanelLogId = log.id;
-      setupEndPanel();
+      setupEndPanel(t);
       $('#end-panel').classList.add('on');
     }, delay);
 
@@ -2610,7 +2688,8 @@ const MiriStore = (() => {
     }, 16000 + delay);
   }
 
-  function setupEndPanel() {
+  function setupEndPanel(ended) {
+    const mode = ended && ended.mode === 'during' ? 'during' : 'until';
     const hasNext = routineRun && routineRun.index < routineRun.routine.steps.length - 1;
     if (hasNext) {
       endMode = 'routine';
@@ -2620,10 +2699,12 @@ const MiriStore = (() => {
       $('#end-done').textContent = '다음: ' + nextStep.label;
     } else {
       endMode = 'normal';
-      $('#end-hint').textContent = '부모님만';
+      $('#end-hint').textContent = mode === 'during' ? '끝났어요' : '이제 시작';
       $('#end-extend').textContent = extendUsed ? '3분 더 (사용함)' : '3분 더';
       $('#end-extend').disabled = extendUsed;
-      $('#end-done').textContent = routineRun ? '다 끝났어요' : '잘 넘어갔어요';
+      $('#end-done').textContent = routineRun
+        ? '다 끝났어요'
+        : (mode === 'during' ? '다 했어요' : '잘 넘어갔어요');
     }
   }
 
@@ -2675,6 +2756,7 @@ const MiriStore = (() => {
     const step = routineRun.routine.steps[routineRun.index];
     startTimer({
       label: step.label, icon: step.icon, minutes: step.minutes,
+      mode: step.mode === 'until' ? 'until' : 'during',
       routineId: routineRun.routine.id, stepIndex: routineRun.index,
       fromRoutine: true
     });
@@ -2691,7 +2773,8 @@ const MiriStore = (() => {
       timer = {
         label: p.label, icon: p.icon, minutes: p.minutes, start: p.start,
         endsAt: p.endsAt, totalMs: p.totalMs || p.minutes * 60000,
-        presetKey: p.presetKey, routineId: p.routineId, stepIndex: p.stepIndex,
+        presetKey: p.presetKey, mode: p.mode === 'during' ? 'during' : 'until',
+        routineId: p.routineId, stepIndex: p.stepIndex,
         childId: p.childId || S.state.activeChildId,
         warned: now <= p.endsAt - 30000,
         midDone: now <= p.endsAt - (p.totalMs || p.minutes * 60000) / 2,

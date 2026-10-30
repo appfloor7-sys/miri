@@ -578,3 +578,11 @@ html[data-theme="dark"] .door{opacity:.55}
 }
 .kid-cue.on{opacity:1;transform:translate(-50%,0)}
 html[data-theme="dark"] .kid-cue{color:rgba(243,235,224,.85);background:rgba(243,235,224,.10)}
+
+/* 시간 시트: 용도 선택 */
+.sheet-mode{margin-top:14px}
+.sheet-mode button{flex:1 1 0;min-height:42px;font-size:13.5px}
+.sheet-mode-note{
+  margin:9px 0 0;font-size:12.5px;line-height:1.55;color:var(--ink-2);font-weight:600;
+  min-height:20px;
+}
