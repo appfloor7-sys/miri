@@ -6,7 +6,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
 <title>미리 — 그만! 대신 10분을 보여주세요</title>
 <meta name="description" content="5~7세 아이의 전환을 덜 아프게. 남은 시간을 보여주고, 고르게 하는 앱.">
-<meta name="theme-color" content="#FFF8EE">
+<meta name="theme-color" content="#FFF8EE" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17130F" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="미리">
@@ -21,6 +22,8 @@
     이 미리보기는 스크립트를 실행하지 않습니다. 실제 앱은 파일을 브라우저로 직접 여세요.
   </div>
 </noscript>
+
+<div id="offline-bar" hidden>인터넷이 없어도 시계는 돌아가요.</div>
 
 <main id="app">
 
@@ -62,7 +65,7 @@
       <div class="ob-hero">⏳</div>
       <h1 class="h1" id="ob-done-title">준비 끝났어요</h1>
       <p class="sub" style="margin-top:12px" id="ob-done-sub">
-        지금 바로 한 번 켜보세요.<br>아이에게 화면을 보여주고 3분만 기다려보면 됩니다.
+        3분만 먼저 해볼까요? 지금 아이에게 보여주세요.
       </p>
       <div class="card" style="margin-top:20px">
         <div class="row between">
@@ -85,7 +88,10 @@
   <section id="view-home" class="view">
     <div class="row between" style="margin-bottom:18px">
       <div class="brand"><span class="brand-dot"></span>미리</div>
-      <div class="muted" id="home-date"></div>
+      <div class="row" style="gap:8px">
+        <button class="child-chip" id="home-child" aria-label="아이 바꾸기">🐰</button>
+        <div class="muted" id="home-date"></div>
+      </div>
     </div>
 
     <div class="hero">
@@ -96,6 +102,21 @@
         <button class="btn sand" id="hero-start">시계 켜기</button>
         <button class="btn ghost" id="hero-change" style="width:auto;flex:none;min-width:88px">시간</button>
       </div>
+      <div class="hero-meta" id="hero-usage"></div>
+    </div>
+
+    <div class="install-banner" id="install-banner" hidden>
+      <div class="ib-text">
+        <strong>홈 화면에 추가</strong>
+        <span id="install-banner-sub">앱처럼 열리고, 알림도 받을 수 있어요.</span>
+      </div>
+      <button class="btn ghost sm" id="install-banner-go">추가</button>
+      <button class="ib-x" id="install-banner-x" aria-label="닫기">✕</button>
+    </div>
+
+    <div class="section" id="routine-section" hidden>
+      <div class="section-head"><h2 class="h2">루틴</h2><span class="muted" id="routine-lock"></span></div>
+      <div class="stack" id="routine-list"></div>
     </div>
 
     <div class="section">
@@ -116,6 +137,19 @@
     <div class="stack" id="set-list"></div>
 
     <div class="section">
+      <div class="section-head"><h2 class="h2">내 사진으로</h2><span class="muted" id="photo-count"></span></div>
+      <div class="chip-row" id="photo-set"></div>
+      <div class="set-group">
+        <div class="set-item">
+          <span class="k">사진 카드 추가</span>
+          <button class="btn ghost sm" id="photo-add">사진 고르기</button>
+        </div>
+      </div>
+      <div class="photo-strip" id="photo-list"></div>
+      <input type="file" id="photo-file" accept="image/*" capture="environment" hidden>
+    </div>
+
+    <div class="section">
       <div class="section-head"><h2 class="h2">최근 선택</h2></div>
       <div class="card" style="padding:8px 16px" id="choice-logs"></div>
     </div>
@@ -124,7 +158,9 @@
   <!-- ================= 기록 ================= -->
   <section id="view-records" class="view">
     <h1 class="h1" style="margin-bottom:6px">기록</h1>
-    <p class="sub" style="margin-bottom:20px">잘한 것만 조용히 쌓입니다. 점수도, 순위도 없어요.</p>
+    <p class="sub" style="margin-bottom:16px">잘한 것만 조용히 쌓입니다. 점수도, 순위도 없어요.</p>
+
+    <div class="chip-row" id="rec-child"></div>
 
     <div class="stat-row">
       <div class="stat"><div class="n" id="st-week">0</div><div class="l">이번 주 성공</div></div>
@@ -133,7 +169,7 @@
     </div>
 
     <div class="section">
-      <div class="section-head"><h2 class="h2">최근 7일</h2></div>
+      <div class="section-head"><h2 class="h2" id="chart-title">최근 7일</h2><span class="muted" id="chart-hint"></span></div>
       <div class="card"><div class="chart" id="chart"></div></div>
     </div>
 
@@ -147,29 +183,60 @@
   <section id="view-settings" class="view">
     <h1 class="h1" style="margin-bottom:20px">설정</h1>
 
-    <div class="set-group">
+    <div class="section-head"><h2 class="h2">아이</h2><button class="btn ghost sm" id="child-add">아이 추가</button></div>
+    <div class="chip-row" id="child-chips"></div>
+    <div class="set-group" style="margin-top:10px">
       <div class="set-item">
-        <span class="k">아이 나이</span>
+        <span class="k">나이</span>
         <div class="seg" id="set-age">
           <button data-age="5">5</button><button data-age="6">6</button><button data-age="7">7</button>
         </div>
       </div>
-      <div class="set-item">
-        <span class="k">소리</span>
-        <button class="switch" id="set-sound" aria-label="소리"></button>
-      </div>
-      <div class="set-item">
-        <span class="k">알림</span>
-        <button class="btn ghost sm" id="set-notify">켜기</button>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><h2 class="h2">소리와 화면</h2></div>
+      <div class="set-group">
+        <div class="set-item"><span class="k">소리</span><button class="switch" id="set-sound" aria-label="소리"></button></div>
+        <div class="set-item" id="haptics-row">
+          <span class="k">진동</span><button class="switch" id="set-haptics" aria-label="진동"></button>
+        </div>
+        <div class="set-item">
+          <span class="k">화면</span>
+          <div class="seg" id="set-theme">
+            <button data-theme="auto">자동</button>
+            <button data-theme="light">밝게</button>
+            <button data-theme="dark">어둡게</button>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="section">
-      <div class="section-head"><h2 class="h2">전환 시간</h2></div>
+      <div class="section-head"><h2 class="h2">알림</h2></div>
+      <div class="set-group">
+        <div class="set-item">
+          <span class="k">종료 알림</span>
+          <button class="btn ghost sm" id="set-notify">켜기</button>
+        </div>
+        <div class="set-item"><span class="k">지금 상태</span><span class="v" id="set-notify-state">–</span></div>
+        <div class="set-item"><span class="k">조용한 시간</span><span class="v">22:00 ~ 07:00</span></div>
+      </div>
+      <p class="note" id="notify-note"></p>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><h2 class="h2">전환 시간</h2><button class="btn ghost sm" id="preset-add">추가</button></div>
       <div class="set-group" id="preset-settings"></div>
     </div>
 
     <div class="section">
+      <div class="section-head"><h2 class="h2">루틴</h2><span class="muted" id="routine-plan"></span></div>
+      <div class="set-group" id="routine-settings"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><h2 class="h2">앱</h2></div>
       <div class="set-group" id="install-block" hidden>
         <div class="set-item">
           <span class="k">홈 화면에 추가</span>
@@ -177,16 +244,41 @@
         </div>
       </div>
       <div class="set-group" style="margin-top:12px">
+        <div class="set-item"><span class="k">내보내기 (JSON)</span><button class="btn ghost sm" id="data-export">저장</button></div>
+        <div class="set-item"><span class="k">내보내기 (CSV)</span><button class="btn ghost sm" id="data-export-csv">저장</button></div>
+        <div class="set-item"><span class="k">불러오기</span><button class="btn ghost sm" id="data-import">파일 선택</button></div>
         <div class="set-item"><span class="k">데이터 초기화</span><button class="btn ghost sm" id="set-reset">초기화</button></div>
       </div>
+      <input type="file" id="import-file" accept="application/json,.json" hidden>
     </div>
 
     <p class="privacy" style="margin-top:22px">
       아이의 기록은 이 기기 밖으로 나가지 않습니다.<br>
-      서버로 보내지 않고, 계정도 만들지 않습니다.<br>
-      알림은 앱이 열려 있을 때만 정확히 동작합니다.<br><br>
-      미리 v1.0
+      서버로 보내지 않고, 계정도 만들지 않습니다.<br><br>
+      미리 v1.1
     </p>
+  </section>
+
+  <!-- ================= 페이월 ================= -->
+  <section id="view-paywall" class="view">
+    <button class="pw-back" id="paywall-back" aria-label="뒤로">←</button>
+    <div class="pw-hero">🌅</div>
+    <h1 class="h1" style="margin-bottom:10px" id="paywall-title">매일 아침 4단계를<br>한 번에</h1>
+    <p class="sub" id="paywall-why">기상부터 등원까지, 단계마다 시계를 켜지 않아도 됩니다.</p>
+
+    <div class="card" style="margin-top:22px">
+      <div class="pw-line"><span>루틴 세트 (아침·저녁)</span><b>포함</b></div>
+      <div class="pw-line"><span>사진 카드 (내 물건으로)</span><b>포함</b></div>
+      <div class="pw-line"><span>시계 횟수 제한 없음</span><b>포함</b></div>
+      <div class="pw-line"><span>기록 30일</span><b>포함</b></div>
+      <div class="pw-line"><span>아이 두 명</span><b>포함</b></div>
+    </div>
+
+    <div class="pw-price"><b>월 4,900원</b><span> · 연 39,000원</span></div>
+    <p class="note" style="text-align:center">지금은 베타 기간이라 결제 없이 켜볼 수 있어요.</p>
+
+    <button class="btn sand" id="paywall-cta" style="margin-top:14px">베타로 켜기</button>
+    <button class="btn ghost" id="paywall-later" style="margin-top:10px">지금은 무료로 계속</button>
   </section>
 
 </main>
@@ -194,6 +286,7 @@
 <!-- ================= 아이 화면 ================= -->
 <section id="view-kid" class="fullscreen">
   <div class="kid-wrap" id="kid-wrap">
+    <div class="routine-dots" id="routine-dots"></div>
     <div class="jar" id="jar">
       <div class="sand-fill" id="sand"></div>
       <div class="bunny" id="bunny">🐰</div>
@@ -201,7 +294,7 @@
     </div>
     <button class="kid-exit" id="kid-exit" aria-label="나가기">✕</button>
     <div class="end-panel" id="end-panel">
-      <div class="end-hint">부모님만</div>
+      <div class="end-hint" id="end-hint">부모님만</div>
       <div class="end-row">
         <button class="btn ghost" id="end-extend">3분 더</button>
         <button class="btn sand" id="end-done">잘 넘어갔어요</button>
@@ -240,12 +333,31 @@
       <span class="muted">숫자는 아이에게 안 보여요</span>
     </div>
     <div class="sheet-grid" id="sheet-grid">
+      <button data-min="1">1분</button>
       <button data-min="3">3분</button>
       <button data-min="5">5분</button>
       <button data-min="10">10분</button>
       <button data-min="15">15분</button>
+      <button data-min="20">20분</button>
+    </div>
+    <div class="sheet-custom">
+      <input type="number" id="sheet-custom" min="1" max="60" inputmode="numeric" placeholder="직접 입력">
+      <span class="muted">분</span>
+      <button class="btn ghost sm" id="sheet-custom-go">시작</button>
     </div>
     <button class="btn ghost" id="sheet-cancel" style="margin-top:14px">닫기</button>
+  </div>
+</div>
+
+<div class="confirm-back" id="confirm">
+  <div class="confirm">
+    <div class="h2" id="confirm-title">확인</div>
+    <p class="sub" id="confirm-text" style="margin-top:8px"></p>
+    <input id="confirm-input" hidden maxlength="12" style="margin-top:14px;width:100%;height:46px;border-radius:14px;border:1.5px solid rgba(46,42,38,.18);background:transparent;color:inherit;font:inherit;font-weight:700;padding:0 14px">
+    <div class="confirm-row">
+      <button class="btn ghost" id="confirm-cancel">취소</button>
+      <button class="btn sand" id="confirm-ok">확인</button>
+    </div>
   </div>
 </div>
 

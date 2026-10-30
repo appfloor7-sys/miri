@@ -7,7 +7,8 @@
 <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiI+CiAgPHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSIxMjIiIGZpbGw9IiNGRkZGRkYiLz4KICA8cmVjdCB4PSI5MiIgeT0iNzIiIHdpZHRoPSIzMjgiIGhlaWdodD0iMzg5IiByeD0iNzIiIGZpbGw9IiNGRkY2RTgiLz4KICA8cGF0aCBkPSJNOTIgMzAwaDMyOHY4OWE3MiA3MiAwIDAgMS03MiA3MkgxNjRhNzIgNzIgMCAwIDEtNzItNzJ6IiBmaWxsPSIjRjJBOTNCIi8+CiAgPHJlY3QgeD0iOTIiIHk9IjMwMCIgd2lkdGg9IjMyOCIgaGVpZ2h0PSI3MiIgZmlsbD0iI0YyQTkzQiIvPgogIDxlbGxpcHNlIGN4PSIyNTYiIGN5PSIzMDAiIHJ4PSIxNSIgcnk9IjE1IiBmaWxsPSIjMkUyQTI2Ii8+CiAgPHJlY3QgeD0iMjIyIiB5PSIyMDMiIHdpZHRoPSIxOCIgaGVpZ2h0PSI3MiIgcng9IjkiIGZpbGw9IiMyRTJBMjYiLz4KICA8cmVjdCB4PSIyNzIiIHk9IjIwMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjcyIiByeD0iOSIgZmlsbD0iIzJFMkEyNiIvPgogIDxlbGxpcHNlIGN4PSIyNTYiIGN5PSIyOTAiIHJ4PSIzOCIgcnk9IjM4IiBmaWxsPSIjMkUyQTI2Ii8+CiAgPGNpcmNsZSBjeD0iMjQyIiBjeT0iMjg0IiByPSI2IiBmaWxsPSIjRkZGRkZGIi8+CiAgPGNpcmNsZSBjeD0iMjcwIiBjeT0iMjg0IiByPSI2IiBmaWxsPSIjRkZGRkZGIi8+Cjwvc3ZnPgo=">
 <title>미리 — 그만! 대신 10분을 보여주세요</title>
 <meta name="description" content="5~7세 아이의 전환을 덜 아프게. 남은 시간을 보여주고, 고르게 하는 앱.">
-<meta name="theme-color" content="#FFF8EE">
+<meta name="theme-color" content="#FFF8EE" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17130F" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="미리">
@@ -19,9 +20,10 @@
   --card:#FFFFFF;
   --ink:#2E2A26;
   --ink-2:#6B6259;
-  --ink-3:#A39A90;
+  --ink-3:#6E655C;
   --sand:#F2A93B;
   --sand-2:#FFD37A;
+  --sand-ink:#8A5A0C;
   --mint:#6FC1A0;
   --sky:#8AB6E1;
   --rose:#E88E8E;
@@ -35,6 +37,36 @@
   --safe-b:env(safe-area-inset-bottom,0px);
   --safe-t:env(safe-area-inset-top,0px);
 }
+
+/* 다크 테마: 잠자리 전환에서 눈부시지 않게 */
+html[data-theme="dark"]{
+  --cream:#17130F;
+  --card:#221C17;
+  --ink:#F3EBE0;
+  --ink-2:#C8BDAF;
+  --ink-3:#A2968A;
+  --sand:#F2A93B;
+  --sand-2:#FFC86B;
+  --sand-ink:#FFC86B;
+  --line:rgba(243,235,224,.10);
+  --line-2:rgba(243,235,224,.18);
+  --shadow:0 10px 30px rgba(0,0,0,.36);
+  --shadow-lg:0 18px 50px rgba(0,0,0,.5);
+}
+html[data-theme="dark"] .hero{
+  background:linear-gradient(150deg,#2B2219 0%,#332818 55%,#3A2C17 100%);
+}
+html[data-theme="dark"] .hero .now-label{color:#FFC86B}
+html[data-theme="dark"] .hero::after{background:rgba(255,255,255,.05)}
+html[data-theme="dark"] .opt,
+html[data-theme="dark"] .preset,
+html[data-theme="dark"] .set-tile,
+html[data-theme="dark"] .choice-card{background:var(--card)}
+html[data-theme="dark"] .btn.ghost{background:rgba(243,235,224,.10);color:var(--ink)}
+html[data-theme="dark"] .btn.sand{color:#3D2F10}
+html[data-theme="dark"] .pill-time{background:rgba(255,200,107,.16);color:#FFC86B}
+html[data-theme="dark"] .tag.s{background:rgba(111,193,160,.18);color:#8FD8BA}
+html[data-theme="dark"] .privacy{color:var(--ink-3)}
 
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
@@ -62,6 +94,18 @@ html.js .view{display:none;animation:fade .22s ease}
 html.js .view.active{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
+/* 모션 감소: 애니메이션 없이 즉시 상태 전환 */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+    scroll-behavior:auto !important;
+  }
+}
+html.reduce-motion .bunny.wave{animation:none}
+html.reduce-motion .bunny.leave{transition:none}
+
 /* ---------- 공통 ---------- */
 .brand{display:flex;align-items:center;gap:8px;font-weight:800;letter-spacing:-.02em}
 .brand-dot{width:10px;height:10px;border-radius:50%;background:var(--sand)}
@@ -78,22 +122,22 @@ html.js .view.active{display:block}
 .btn{
   display:flex;align-items:center;justify-content:center;gap:8px;
   min-height:54px;padding:0 20px;border-radius:18px;font-weight:800;font-size:16px;
-  background:var(--ink);color:#fff;transition:transform .12s ease,opacity .12s;
+  background:var(--ink);color:var(--cream);transition:transform .12s ease,opacity .12s;
   width:100%;
 }
 .btn:active{transform:scale(.975)}
 .btn.sand{background:linear-gradient(135deg,var(--sand-2),var(--sand));color:#4A3411}
 .btn.ghost{background:rgba(46,42,38,.06);color:var(--ink)}
-.btn.sm{min-height:42px;font-size:14px;border-radius:14px;padding:0 14px;width:auto}
+.btn.sm{min-height:44px;font-size:14px;border-radius:14px;padding:0 14px;width:auto}
 .chip{
   display:inline-flex;align-items:center;gap:6px;
   padding:8px 14px;border-radius:999px;background:rgba(46,42,38,.06);
   font-size:13.5px;font-weight:700;color:var(--ink-2);
 }
-.chip.on{background:var(--ink);color:#fff}
+.chip.on{background:var(--ink);color:var(--cream)}
 .pill-time{
   padding:6px 10px;border-radius:999px;background:rgba(242,169,59,.14);
-  color:#9A6208;font-weight:800;font-size:12.5px;
+  color:var(--sand-ink);font-weight:800;font-size:12.5px;
 }
 
 /* ---------- 온보딩 ---------- */
@@ -106,7 +150,7 @@ html.js .view.active{display:block}
 .ob-progress i.on{background:var(--sand)}
 .opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
 .opt{
-  background:#fff;border-radius:22px;padding:20px 16px;text-align:center;
+  background:var(--card);border-radius:22px;padding:20px 16px;text-align:center;
   box-shadow:var(--shadow);border:2px solid transparent;transition:.15s;
 }
 .opt .em{font-size:34px;display:block;margin-bottom:8px}
@@ -123,14 +167,14 @@ html.js .view.active{display:block}
   content:"";position:absolute;right:-30px;top:-40px;width:150px;height:150px;
   border-radius:50%;background:rgba(255,255,255,.45);
 }
-.hero .now-label{font-size:12.5px;font-weight:800;color:#9A6208;letter-spacing:.06em}
+.hero .now-label{font-size:12.5px;font-weight:800;color:var(--sand-ink);letter-spacing:.06em}
 .hero-title{font-size:24px;font-weight:800;letter-spacing:-.03em;margin:6px 0 4px;display:flex;align-items:center;gap:10px}
 .hero-title .em{font-size:30px}
 .hero-actions{display:flex;gap:10px;margin-top:16px;position:relative;z-index:1}
 
 .preset-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .preset{
-  background:#fff;border-radius:var(--r-md);padding:16px;box-shadow:var(--shadow);
+  background:var(--card);border-radius:var(--r-md);padding:16px;box-shadow:var(--shadow);
   display:flex;flex-direction:column;gap:10px;text-align:left;transition:transform .12s;
   position:relative;overflow:hidden;
 }
@@ -139,11 +183,11 @@ html.js .view.active{display:block}
 .preset .lb{font-weight:800;font-size:15.5px;letter-spacing:-.02em}
 .preset .mt{font-size:12.5px;color:var(--ink-3);font-weight:700}
 .preset .pin{
-  position:absolute;top:12px;right:12px;font-size:11px;font-weight:800;color:#9A6208;
+  position:absolute;top:12px;right:12px;font-size:11px;font-weight:800;color:var(--sand-ink);
   background:rgba(242,169,59,.16);padding:4px 8px;border-radius:99px;
 }
 .preset .go{
-  margin-top:2px;font-size:13px;font-weight:800;color:var(--sand);
+  margin-top:2px;font-size:13px;font-weight:800;color:var(--sand-ink);
   display:flex;align-items:center;gap:4px;
 }
 
@@ -155,7 +199,7 @@ html.js .view.active{display:block}
 .log-time{font-size:12.5px;color:var(--ink-3);font-weight:700}
 .tag{font-size:11.5px;font-weight:800;padding:4px 9px;border-radius:99px}
 .tag.s{background:rgba(111,193,160,.16);color:#2E7D5F}
-.tag.e{background:rgba(242,169,59,.18);color:#9A6208}
+.tag.e{background:rgba(242,169,59,.18);color:var(--sand-ink)}
 .tag.a{background:rgba(232,142,142,.16);color:#A94A4A}
 
 .empty{
@@ -165,7 +209,7 @@ html.js .view.active{display:block}
 
 /* ---------- 카드 ---------- */
 .set-tile{
-  display:flex;align-items:center;gap:14px;background:#fff;border-radius:var(--r-md);
+  display:flex;align-items:center;gap:14px;background:var(--card);border-radius:var(--r-md);
   padding:16px;box-shadow:var(--shadow);width:100%;text-align:left;transition:transform .12s;
 }
 .set-tile:active{transform:scale(.98)}
@@ -256,7 +300,7 @@ html.js .view.active{display:block}
 .choice-q{text-align:center;font-size:20px;font-weight:800;letter-spacing:-.02em;color:#2C4A3C;margin-bottom:auto}
 .choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1;align-content:center;padding:20px 0}
 .choice-card{
-  aspect-ratio:3/4;border-radius:32px;background:#fff;box-shadow:var(--shadow-lg);
+  aspect-ratio:3/4;border-radius:32px;background:var(--card);box-shadow:var(--shadow-lg);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
   transition:transform .18s ease,opacity .3s ease,box-shadow .2s;
   border:3px solid transparent;
@@ -271,7 +315,7 @@ html.js .view.active{display:block}
 
 /* ---------- 기록 ---------- */
 .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.stat{background:#fff;border-radius:var(--r-md);padding:16px 14px;box-shadow:var(--shadow)}
+.stat{background:var(--card);border-radius:var(--r-md);padding:16px 14px;box-shadow:var(--shadow)}
 .stat .n{font-size:24px;font-weight:800;letter-spacing:-.03em}
 .stat .l{font-size:12px;color:var(--ink-3);font-weight:700;margin-top:2px}
 .chart{display:flex;align-items:flex-end;gap:10px;height:132px;padding:8px 2px 0}
@@ -279,18 +323,20 @@ html.js .view.active{display:block}
 .bar-track{width:100%;flex:1;display:flex;align-items:flex-end;background:rgba(46,42,38,.05);border-radius:10px;overflow:hidden}
 .bar-fill{width:100%;background:linear-gradient(180deg,var(--sand-2),var(--sand));border-radius:10px;min-height:4px;transition:height .5s cubic-bezier(.2,.8,.2,1)}
 .bar-col .d{font-size:11.5px;color:var(--ink-3);font-weight:800}
-.bar-col.today .d{color:var(--sand)}
+.bar-col.today .d{color:var(--sand-ink)}
 
 /* ---------- 설정 ---------- */
-.set-group{background:#fff;border-radius:var(--r-md);box-shadow:var(--shadow);overflow:hidden}
+.set-group{background:var(--card);border-radius:var(--r-md);box-shadow:var(--shadow);overflow:hidden}
 .set-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px;border-bottom:1px solid var(--line)}
 .set-item:last-child{border-bottom:0}
 .set-item .k{font-weight:700;font-size:14.5px}
 .set-item .v{font-size:13.5px;color:var(--ink-3);font-weight:700}
 .seg{display:flex;gap:6px}
-.seg button{padding:7px 12px;border-radius:11px;background:rgba(46,42,38,.06);font-weight:800;font-size:13px;color:var(--ink-2)}
-.seg button.on{background:var(--ink);color:#fff}
+.seg button{min-height:38px;min-width:38px;padding:7px 12px;border-radius:11px;background:rgba(46,42,38,.06);font-weight:800;font-size:13px;color:var(--ink-2)}
+.seg button.on{background:var(--ink);color:var(--cream)}
 .switch{width:50px;height:30px;border-radius:99px;background:rgba(46,42,38,.16);position:relative;transition:.2s;flex:none}
+/* 보이는 크기는 작게, 누르는 영역은 44px 이상으로 */
+.switch::before{content:"";position:absolute;inset:-8px;border-radius:99px}
 .switch::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.15)}
 .switch.on{background:var(--mint)}
 .switch.on::after{left:23px}
@@ -303,7 +349,8 @@ html.js .view.active{display:block}
 /* ---------- 탭바 ---------- */
 #tabbar{
   position:fixed;bottom:0;left:0;right:0;z-index:40;
-  background:rgba(255,248,238,.88);backdrop-filter:blur(14px);
+  background:rgba(255,248,238,.90);
+  background:color-mix(in srgb, var(--cream) 88%, transparent);backdrop-filter:blur(14px);
   border-top:1px solid var(--line);
   padding-bottom:var(--safe-b);
 }
@@ -331,7 +378,7 @@ html.js .view.active{display:block}
 @keyframes up{from{transform:translateY(30px);opacity:.6}to{transform:none;opacity:1}}
 .sheet-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
 .sheet-grid button{
-  padding:16px 0;border-radius:16px;background:#fff;font-weight:800;font-size:15px;
+  padding:16px 0;border-radius:16px;background:var(--card);font-weight:800;font-size:15px;
   box-shadow:var(--shadow);
 }
 .sheet-grid button:active{transform:scale(.96)}
@@ -349,6 +396,181 @@ html.js .view.active{display:block}
   *{animation-duration:.001s!important;transition-duration:.001s!important}
 }
 
+/* =====================================================================
+   v1.0 완성분: 신규 컴포넌트
+   ===================================================================== */
+
+/* ---------- 오프라인 / 설치 배너 ---------- */
+#offline-bar{
+  position:fixed;left:0;right:0;top:0;z-index:120;
+  padding:calc(8px + env(safe-area-inset-top)) 16px 8px;
+  background:#4A423A;color:#FFF6E8;font-size:12.5px;font-weight:700;text-align:center;
+}
+#offline-bar[hidden]{display:none}
+
+.install-banner{
+  display:flex;align-items:center;gap:10px;margin-top:14px;padding:14px 16px;
+  background:rgba(242,169,59,.13);border-radius:var(--r-md);border:1px solid rgba(242,169,59,.35);
+}
+.install-banner[hidden]{display:none}
+.install-banner .ib-text{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.install-banner strong{font-size:14px}
+.install-banner .ib-text span{font-size:12.5px;color:var(--ink-2);line-height:1.4}
+.install-banner .ib-x{
+  width:30px;height:30px;flex:none;border-radius:50%;background:rgba(46,42,38,.08);
+  display:grid;place-items:center;font-size:13px;color:var(--ink-2);
+}
+html[data-theme="dark"] .install-banner{background:rgba(242,169,59,.10)}
+html[data-theme="dark"] .install-banner .ib-x{background:rgba(243,235,224,.10)}
+
+/* ---------- 아이 칩 ---------- */
+.child-chip{
+  display:inline-grid;place-items:center;width:40px;height:40px;border-radius:50%;
+  background:rgba(46,42,38,.07);font-size:17px;line-height:1;
+}
+.child-chip.on{background:var(--ink);color:var(--cream);box-shadow:0 0 0 3px rgba(242,169,59,.35)}
+html[data-theme="dark"] .child-chip{background:rgba(243,235,224,.10)}
+
+.chip-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.chip-row:empty{display:none}
+.chip-btn{
+  display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 15px;border-radius:999px;
+  background:rgba(46,42,38,.06);font-size:13.5px;font-weight:700;color:var(--ink-2);
+  border:1.5px solid transparent;
+}
+.chip-btn.on{background:var(--card);color:var(--ink);border-color:var(--sand);box-shadow:var(--shadow)}
+html[data-theme="dark"] .chip-btn{background:rgba(243,235,224,.08)}
+
+/* ---------- 히어로 사용량 ---------- */
+.hero-meta{margin-top:12px;font-size:12px;font-weight:700;color:var(--sand-ink);position:relative;z-index:1}
+html[data-theme="dark"] .hero-meta{color:#E0AE5B}
+.hero-meta:empty{display:none}
+
+/* ---------- 루틴 타일 ---------- */
+.routine-tile{
+  display:flex;align-items:center;gap:12px;background:var(--card);border-radius:var(--r-md);
+  padding:14px 16px;box-shadow:var(--shadow);text-align:left;width:100%;
+}
+.routine-tile .em{font-size:24px;line-height:1}
+.routine-tile .rt-main{flex:1;min-width:0}
+.routine-tile .rt-name{font-weight:800;font-size:15px;display:block}
+.routine-tile .rt-steps{font-size:12.5px;color:var(--ink-2);margin-top:2px;display:block}
+.routine-tile .rt-lock{font-size:15px}
+.routine-tile.locked{opacity:.62}
+
+/* ---------- 아이 화면 루틴 점 ---------- */
+.routine-dots{
+  position:absolute;top:calc(18px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);
+  display:flex;gap:8px;z-index:3;
+}
+.routine-dots:empty{display:none}
+.routine-dots i{width:9px;height:9px;border-radius:50%;background:rgba(46,42,38,.18)}
+.routine-dots i.on{background:var(--sand);transform:scale(1.25)}
+.routine-dots i.done{background:rgba(46,42,38,.35)}
+
+/* ---------- 시간 시트 직접 입력 ---------- */
+.sheet-custom{display:flex;align-items:center;gap:8px;margin-top:12px}
+.sheet-custom input{
+  flex:1;min-width:0;height:46px;border-radius:14px;border:1.5px solid var(--line-2);
+  background:var(--card);color:var(--ink);padding:0 14px;font-size:15px;font-weight:700;
+  font-family:inherit;
+}
+.sheet-custom input::placeholder{color:var(--ink-3);font-weight:600}
+
+/* ---------- 확인 다이얼로그 ---------- */
+.confirm-back{
+  position:fixed;inset:0;z-index:140;display:none;align-items:center;justify-content:center;
+  padding:24px;background:rgba(24,20,16,.45);
+}
+.confirm-back.on{display:flex}
+.confirm{
+  background:var(--card);border-radius:var(--r-lg);padding:24px;width:100%;max-width:360px;
+  box-shadow:var(--shadow-lg);
+}
+.confirm-row{display:flex;gap:10px;margin-top:20px}
+.confirm-row .btn{flex:1 1 0;width:auto;min-width:0;min-height:48px;font-size:15px}
+
+/* ---------- 페이월 ---------- */
+#view-paywall{padding-top:6px}
+.pw-back{
+  width:40px;height:40px;border-radius:50%;display:grid;place-items:center;
+  background:rgba(46,42,38,.06);font-size:18px;margin-bottom:14px;
+}
+html[data-theme="dark"] .pw-back{background:rgba(243,235,224,.10)}
+.pw-hero{font-size:48px;line-height:1;margin-bottom:14px}
+.pw-line{
+  display:flex;align-items:center;justify-content:space-between;padding:11px 0;
+  border-bottom:1px solid var(--line);font-size:14px;
+}
+.pw-line:last-child{border-bottom:0}
+.pw-line b{color:var(--ink-2);font-weight:700;font-size:13px}
+.pw-price{margin-top:20px;font-size:14px;color:var(--ink-2)}
+.pw-price b{font-size:22px;color:var(--ink);letter-spacing:-.02em}
+
+/* ---------- 사진 카드 ---------- */
+.choice-card .em.photo{
+  width:100%;aspect-ratio:1;border-radius:18px;overflow:hidden;display:block;
+  background:rgba(46,42,38,.06);
+}
+.choice-card .em.photo img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.photo-thumb{
+  position:relative;width:64px;height:64px;border-radius:14px;overflow:hidden;background:rgba(46,42,38,.06);
+}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-thumb button{
+  position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;
+  background:rgba(24,20,16,.72);color:#fff;font-size:11px;display:grid;place-items:center;
+}
+
+/* ---------- 설정 보조 ---------- */
+.note{color:var(--ink-3);font-size:12px;line-height:1.6;margin-top:8px}
+.set-item .k{min-width:0}
+.set-item .seg{flex:none}
+.time-input{
+  height:38px;border-radius:11px;border:1.5px solid var(--line-2);background:var(--card);
+  color:var(--ink);padding:0 8px;font-size:13px;font-weight:700;font-family:inherit;
+}
+.row.wrap{flex-wrap:wrap;gap:8px}
+.lock-pill{
+  font-size:11.5px;font-weight:800;color:var(--sand-ink);background:rgba(242,169,59,.16);
+  padding:5px 9px;border-radius:999px;
+}
+html[data-theme="dark"] .lock-pill{color:#FFC86B}
+
+/* 차트 30일 대응 */
+.chart.dense{gap:2px}
+.chart.dense .bar-col .d{font-size:8px}
+
+/* 다크 보정: 반투명 배경 위 텍스트와 보조 컨트롤 */
+html[data-theme="dark"] .tag.e{background:rgba(242,169,59,.20);color:#FFC86B}
+html[data-theme="dark"] .tag.a{background:rgba(232,142,142,.20);color:#F0A8A8}
+html[data-theme="dark"] .bar-track{background:rgba(243,235,224,.08)}
+html[data-theme="dark"] .switch{background:rgba(243,235,224,.22)}
+html[data-theme="dark"] .seg button{background:rgba(243,235,224,.10)}
+html[data-theme="dark"] .seg button.on{background:var(--ink);color:var(--cream)}
+html[data-theme="dark"] .chip-btn.on{background:var(--card)}
+html[data-theme="dark"] .log-item{border-bottom-color:var(--line)}
+html[data-theme="dark"] .bar-fill{background:linear-gradient(180deg,var(--sand),#E09428)}
+
+html[data-theme="dark"] #tabbar{background:rgba(23,19,15,.92)}
+html[data-theme="dark"] .tab .ic{filter:none;opacity:.9}
+html[data-theme="dark"] .tab{color:var(--ink-3)}
+html[data-theme="dark"] .tab.on{color:var(--ink)}
+
+/* 잠자리 전환: 아이 화면도 어둡게 (밝은 화면은 잠을 깨운다) */
+html[data-theme="dark"] .kid-wrap{
+  background:radial-gradient(120% 90% at 50% 0%,#241C15 0%,#1C1611 60%,#15110D 100%);
+}
+html[data-theme="dark"] .jar{
+  background:#221B15;
+  box-shadow:0 20px 60px rgba(0,0,0,.55),inset 0 0 0 2px rgba(243,235,224,.10);
+}
+html[data-theme="dark"] .jar::after{box-shadow:inset 0 -20px 40px rgba(0,0,0,.35)}
+html[data-theme="dark"] .sand-fill{background:linear-gradient(180deg,#C98A2E,#8E5F1C)}
+html[data-theme="dark"] .kid-exit{background:rgba(243,235,224,.10);color:var(--ink-2)}
+html[data-theme="dark"] .door{opacity:.55}
+
 </style>
 </head>
 <body>
@@ -357,6 +579,8 @@ html.js .view.active{display:block}
     이 미리보기는 스크립트를 실행하지 않습니다. 실제 앱은 파일을 브라우저로 직접 여세요.
   </div>
 </noscript>
+
+<div id="offline-bar" hidden>인터넷이 없어도 시계는 돌아가요.</div>
 
 <main id="app">
 
@@ -398,7 +622,7 @@ html.js .view.active{display:block}
       <div class="ob-hero">⏳</div>
       <h1 class="h1" id="ob-done-title">준비 끝났어요</h1>
       <p class="sub" style="margin-top:12px" id="ob-done-sub">
-        지금 바로 한 번 켜보세요.<br>아이에게 화면을 보여주고 3분만 기다려보면 됩니다.
+        3분만 먼저 해볼까요? 지금 아이에게 보여주세요.
       </p>
       <div class="card" style="margin-top:20px">
         <div class="row between">
@@ -421,7 +645,10 @@ html.js .view.active{display:block}
   <section id="view-home" class="view">
     <div class="row between" style="margin-bottom:18px">
       <div class="brand"><span class="brand-dot"></span>미리</div>
-      <div class="muted" id="home-date"></div>
+      <div class="row" style="gap:8px">
+        <button class="child-chip" id="home-child" aria-label="아이 바꾸기">🐰</button>
+        <div class="muted" id="home-date"></div>
+      </div>
     </div>
 
     <div class="hero">
@@ -432,6 +659,21 @@ html.js .view.active{display:block}
         <button class="btn sand" id="hero-start">시계 켜기</button>
         <button class="btn ghost" id="hero-change" style="width:auto;flex:none;min-width:88px">시간</button>
       </div>
+      <div class="hero-meta" id="hero-usage"></div>
+    </div>
+
+    <div class="install-banner" id="install-banner" hidden>
+      <div class="ib-text">
+        <strong>홈 화면에 추가</strong>
+        <span id="install-banner-sub">앱처럼 열리고, 알림도 받을 수 있어요.</span>
+      </div>
+      <button class="btn ghost sm" id="install-banner-go">추가</button>
+      <button class="ib-x" id="install-banner-x" aria-label="닫기">✕</button>
+    </div>
+
+    <div class="section" id="routine-section" hidden>
+      <div class="section-head"><h2 class="h2">루틴</h2><span class="muted" id="routine-lock"></span></div>
+      <div class="stack" id="routine-list"></div>
     </div>
 
     <div class="section">
@@ -452,6 +694,19 @@ html.js .view.active{display:block}
     <div class="stack" id="set-list"></div>
 
     <div class="section">
+      <div class="section-head"><h2 class="h2">내 사진으로</h2><span class="muted" id="photo-count"></span></div>
+      <div class="chip-row" id="photo-set"></div>
+      <div class="set-group">
+        <div class="set-item">
+          <span class="k">사진 카드 추가</span>
+          <button class="btn ghost sm" id="photo-add">사진 고르기</button>
+        </div>
+      </div>
+      <div class="photo-strip" id="photo-list"></div>
+      <input type="file" id="photo-file" accept="image/*" capture="environment" hidden>
+    </div>
+
+    <div class="section">
       <div class="section-head"><h2 class="h2">최근 선택</h2></div>
       <div class="card" style="padding:8px 16px" id="choice-logs"></div>
     </div>
@@ -460,7 +715,9 @@ html.js .view.active{display:block}
   <!-- ================= 기록 ================= -->
   <section id="view-records" class="view">
     <h1 class="h1" style="margin-bottom:6px">기록</h1>
-    <p class="sub" style="margin-bottom:20px">잘한 것만 조용히 쌓입니다. 점수도, 순위도 없어요.</p>
+    <p class="sub" style="margin-bottom:16px">잘한 것만 조용히 쌓입니다. 점수도, 순위도 없어요.</p>
+
+    <div class="chip-row" id="rec-child"></div>
 
     <div class="stat-row">
       <div class="stat"><div class="n" id="st-week">0</div><div class="l">이번 주 성공</div></div>
@@ -469,7 +726,7 @@ html.js .view.active{display:block}
     </div>
 
     <div class="section">
-      <div class="section-head"><h2 class="h2">최근 7일</h2></div>
+      <div class="section-head"><h2 class="h2" id="chart-title">최근 7일</h2><span class="muted" id="chart-hint"></span></div>
       <div class="card"><div class="chart" id="chart"></div></div>
     </div>
 
@@ -483,29 +740,60 @@ html.js .view.active{display:block}
   <section id="view-settings" class="view">
     <h1 class="h1" style="margin-bottom:20px">설정</h1>
 
-    <div class="set-group">
+    <div class="section-head"><h2 class="h2">아이</h2><button class="btn ghost sm" id="child-add">아이 추가</button></div>
+    <div class="chip-row" id="child-chips"></div>
+    <div class="set-group" style="margin-top:10px">
       <div class="set-item">
-        <span class="k">아이 나이</span>
+        <span class="k">나이</span>
         <div class="seg" id="set-age">
           <button data-age="5">5</button><button data-age="6">6</button><button data-age="7">7</button>
         </div>
       </div>
-      <div class="set-item">
-        <span class="k">소리</span>
-        <button class="switch" id="set-sound" aria-label="소리"></button>
-      </div>
-      <div class="set-item">
-        <span class="k">알림</span>
-        <button class="btn ghost sm" id="set-notify">켜기</button>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><h2 class="h2">소리와 화면</h2></div>
+      <div class="set-group">
+        <div class="set-item"><span class="k">소리</span><button class="switch" id="set-sound" aria-label="소리"></button></div>
+        <div class="set-item" id="haptics-row">
+          <span class="k">진동</span><button class="switch" id="set-haptics" aria-label="진동"></button>
+        </div>
+        <div class="set-item">
+          <span class="k">화면</span>
+          <div class="seg" id="set-theme">
+            <button data-theme="auto">자동</button>
+            <button data-theme="light">밝게</button>
+            <button data-theme="dark">어둡게</button>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="section">
-      <div class="section-head"><h2 class="h2">전환 시간</h2></div>
+      <div class="section-head"><h2 class="h2">알림</h2></div>
+      <div class="set-group">
+        <div class="set-item">
+          <span class="k">종료 알림</span>
+          <button class="btn ghost sm" id="set-notify">켜기</button>
+        </div>
+        <div class="set-item"><span class="k">지금 상태</span><span class="v" id="set-notify-state">–</span></div>
+        <div class="set-item"><span class="k">조용한 시간</span><span class="v">22:00 ~ 07:00</span></div>
+      </div>
+      <p class="note" id="notify-note"></p>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><h2 class="h2">전환 시간</h2><button class="btn ghost sm" id="preset-add">추가</button></div>
       <div class="set-group" id="preset-settings"></div>
     </div>
 
     <div class="section">
+      <div class="section-head"><h2 class="h2">루틴</h2><span class="muted" id="routine-plan"></span></div>
+      <div class="set-group" id="routine-settings"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><h2 class="h2">앱</h2></div>
       <div class="set-group" id="install-block" hidden>
         <div class="set-item">
           <span class="k">홈 화면에 추가</span>
@@ -513,16 +801,41 @@ html.js .view.active{display:block}
         </div>
       </div>
       <div class="set-group" style="margin-top:12px">
+        <div class="set-item"><span class="k">내보내기 (JSON)</span><button class="btn ghost sm" id="data-export">저장</button></div>
+        <div class="set-item"><span class="k">내보내기 (CSV)</span><button class="btn ghost sm" id="data-export-csv">저장</button></div>
+        <div class="set-item"><span class="k">불러오기</span><button class="btn ghost sm" id="data-import">파일 선택</button></div>
         <div class="set-item"><span class="k">데이터 초기화</span><button class="btn ghost sm" id="set-reset">초기화</button></div>
       </div>
+      <input type="file" id="import-file" accept="application/json,.json" hidden>
     </div>
 
     <p class="privacy" style="margin-top:22px">
       아이의 기록은 이 기기 밖으로 나가지 않습니다.<br>
-      서버로 보내지 않고, 계정도 만들지 않습니다.<br>
-      알림은 앱이 열려 있을 때만 정확히 동작합니다.<br><br>
-      미리 v1.0
+      서버로 보내지 않고, 계정도 만들지 않습니다.<br><br>
+      미리 v1.1
     </p>
+  </section>
+
+  <!-- ================= 페이월 ================= -->
+  <section id="view-paywall" class="view">
+    <button class="pw-back" id="paywall-back" aria-label="뒤로">←</button>
+    <div class="pw-hero">🌅</div>
+    <h1 class="h1" style="margin-bottom:10px" id="paywall-title">매일 아침 4단계를<br>한 번에</h1>
+    <p class="sub" id="paywall-why">기상부터 등원까지, 단계마다 시계를 켜지 않아도 됩니다.</p>
+
+    <div class="card" style="margin-top:22px">
+      <div class="pw-line"><span>루틴 세트 (아침·저녁)</span><b>포함</b></div>
+      <div class="pw-line"><span>사진 카드 (내 물건으로)</span><b>포함</b></div>
+      <div class="pw-line"><span>시계 횟수 제한 없음</span><b>포함</b></div>
+      <div class="pw-line"><span>기록 30일</span><b>포함</b></div>
+      <div class="pw-line"><span>아이 두 명</span><b>포함</b></div>
+    </div>
+
+    <div class="pw-price"><b>월 4,900원</b><span> · 연 39,000원</span></div>
+    <p class="note" style="text-align:center">지금은 베타 기간이라 결제 없이 켜볼 수 있어요.</p>
+
+    <button class="btn sand" id="paywall-cta" style="margin-top:14px">베타로 켜기</button>
+    <button class="btn ghost" id="paywall-later" style="margin-top:10px">지금은 무료로 계속</button>
   </section>
 
 </main>
@@ -530,6 +843,7 @@ html.js .view.active{display:block}
 <!-- ================= 아이 화면 ================= -->
 <section id="view-kid" class="fullscreen">
   <div class="kid-wrap" id="kid-wrap">
+    <div class="routine-dots" id="routine-dots"></div>
     <div class="jar" id="jar">
       <div class="sand-fill" id="sand"></div>
       <div class="bunny" id="bunny">🐰</div>
@@ -537,7 +851,7 @@ html.js .view.active{display:block}
     </div>
     <button class="kid-exit" id="kid-exit" aria-label="나가기">✕</button>
     <div class="end-panel" id="end-panel">
-      <div class="end-hint">부모님만</div>
+      <div class="end-hint" id="end-hint">부모님만</div>
       <div class="end-row">
         <button class="btn ghost" id="end-extend">3분 더</button>
         <button class="btn sand" id="end-done">잘 넘어갔어요</button>
@@ -576,26 +890,52 @@ html.js .view.active{display:block}
       <span class="muted">숫자는 아이에게 안 보여요</span>
     </div>
     <div class="sheet-grid" id="sheet-grid">
+      <button data-min="1">1분</button>
       <button data-min="3">3분</button>
       <button data-min="5">5분</button>
       <button data-min="10">10분</button>
       <button data-min="15">15분</button>
+      <button data-min="20">20분</button>
+    </div>
+    <div class="sheet-custom">
+      <input type="number" id="sheet-custom" min="1" max="60" inputmode="numeric" placeholder="직접 입력">
+      <span class="muted">분</span>
+      <button class="btn ghost sm" id="sheet-custom-go">시작</button>
     </div>
     <button class="btn ghost" id="sheet-cancel" style="margin-top:14px">닫기</button>
+  </div>
+</div>
+
+<div class="confirm-back" id="confirm">
+  <div class="confirm">
+    <div class="h2" id="confirm-title">확인</div>
+    <p class="sub" id="confirm-text" style="margin-top:8px"></p>
+    <input id="confirm-input" hidden maxlength="12" style="margin-top:14px;width:100%;height:46px;border-radius:14px;border:1.5px solid rgba(46,42,38,.18);background:transparent;color:inherit;font:inherit;font-weight:700;padding:0 14px">
+    <div class="confirm-row">
+      <button class="btn ghost" id="confirm-cancel">취소</button>
+      <button class="btn sand" id="confirm-ok">확인</button>
+    </div>
   </div>
 </div>
 
 <div id="toast"></div>
 
 <script>
-/* 미리 — 상태 저장소 */
+/* 미리 — 상태 저장소 (schema v2) */
 const MiriStore = (() => {
-  const KEY = 'miri.v1';
+  'use strict';
+
+  const KEY = 'miri.v2';
+  const LEGACY_KEY = 'miri.v1';
+  const PENDING_KEY = 'miri.pending';
+  const LIMIT = { logs: 400, choices: 200, events: 500 };
+
+  const FREE = { timersPerDay: 5, customPresets: 2, recordDays: 7, notifyPerDay: 6 };
 
   const PRESET_BANK = [
-    { key: 'go',    label: '등원',   icon: '🎒', minutes: 10, time: '07:40' },
-    { key: 'home',  label: '하원',   icon: '🏠', minutes: 10, time: '16:00' },
-    { key: 'bath',  label: '목욕',   icon: '🛁', minutes: 10, time: '19:30' },
+    { key: 'go', label: '등원', icon: '🎒', minutes: 10, time: '07:40' },
+    { key: 'home', label: '하원', icon: '🏠', minutes: 10, time: '16:00' },
+    { key: 'bath', label: '목욕', icon: '🛁', minutes: 10, time: '19:30' },
     { key: 'sleep', label: '잠자리', icon: '🌙', minutes: 15, time: '20:30' }
   ];
 
@@ -618,43 +958,197 @@ const MiriStore = (() => {
     ]}
   ];
 
+  const ROUTINE_BANK = [
+    { id: 'morning', name: '아침 루틴', icon: '🌅', time: '07:20', steps: [
+      { label: '기상', icon: '☀️', minutes: 3 },
+      { label: '아침밥', icon: '🥣', minutes: 15 },
+      { label: '옷 입기', icon: '👕', minutes: 10 },
+      { label: '등원', icon: '🎒', minutes: 5 }
+    ]},
+    { id: 'evening', name: '저녁 루틴', icon: '🌙', time: '19:30', steps: [
+      { label: '목욕', icon: '🛁', minutes: 10 },
+      { label: '양치', icon: '🪥', minutes: 3 },
+      { label: '책 읽기', icon: '📖', minutes: 10 }
+    ]}
+  ];
+
+  const clone = o => JSON.parse(JSON.stringify(o));
+
+  function dayKey(ts) {
+    const d = new Date(ts === undefined ? Date.now() : ts);
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  function uid(prefix) {
+    return (prefix || 'x') + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  }
+
   function defaults() {
+    const today = dayKey();
     return {
+      schema: 2,
       onboarded: false,
       age: null,
+      hardMoment: 'go',
       sound: true,
+      haptics: true,
+      theme: 'auto',
       notify: false,
-      presets: PRESET_BANK.map(p => ({ ...p, pinned: false })),
+      notifyQuiet: { from: '22:00', to: '07:00' },
+      installHintSeen: false,
+      children: [{ id: 'c1', name: '우리 아이', age: null, avatar: '🐰' }],
+      activeChildId: 'c1',
+      presets: PRESET_BANK.map(p => ({ ...p, pinned: false, custom: false })),
+      routines: clone(ROUTINE_BANK),
+      cards: {},
       logs: [],
-      choiceLogs: []
+      choiceLogs: [],
+      events: [],
+      gate: {
+        plan: 'free',
+        timerCountToday: 0,
+        dayKey: today,
+        notifiedToday: 0,
+        notifyDayKey: today
+      }
     };
   }
 
+  /* ---------- 마이그레이션 ---------- */
+
+  function migrate(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    if (raw.schema === 2) return raw;
+
+    const out = defaults();
+    out.onboarded = !!raw.onboarded;
+    out.age = raw.age ?? null;
+    out.sound = raw.sound !== false;
+    out.notify = !!raw.notify;
+
+    if (Array.isArray(raw.presets) && raw.presets.length) {
+      out.presets = raw.presets.map(p => ({
+        key: p.key,
+        label: p.label,
+        icon: p.icon || '⏳',
+        minutes: Number(p.minutes) || 10,
+        time: p.time || '09:00',
+        pinned: !!p.pinned,
+        custom: false
+      }));
+    }
+    out.children[0].age = out.age;
+    out.logs = (Array.isArray(raw.logs) ? raw.logs : []).map(l => ({
+      id: l.id || uid('l'),
+      presetKey: l.presetKey || null,
+      label: l.label || '전환',
+      icon: l.icon || '⏳',
+      minutes: Number(l.minutes) || 1,
+      start: Number(l.start) || Date.now(),
+      end: Number(l.end) || (Number(l.start) || Date.now()) + (Number(l.minutes) || 1) * 60000,
+      outcome: ['success', 'extend', 'abort'].includes(l.outcome) ? l.outcome : 'success',
+      extended: 0,
+      childId: 'c1',
+      routineId: null,
+      stepIndex: null,
+      trial: !!l.trial
+    }));
+    out.choiceLogs = (Array.isArray(raw.choiceLogs) ? raw.choiceLogs : []).map(c => ({
+      id: c.id || uid('c'),
+      setKey: null,
+      title: c.title || '',
+      emoji: c.emoji || '🃏',
+      label: c.label || '',
+      at: Number(c.at) || Date.now(),
+      childId: 'c1'
+    }));
+    return out;
+  }
+
+  /* ---------- 저장 ---------- */
+
+  let memoryOnly = false;
   let state = load();
 
   function load() {
     try {
-      const raw = JSON.parse(localStorage.getItem(KEY) || 'null');
-      if (!raw || typeof raw !== 'object') return defaults();
-      const base = defaults();
-      return {
-        ...base,
-        ...raw,
-        presets: Array.isArray(raw.presets) && raw.presets.length ? raw.presets : base.presets,
-        logs: Array.isArray(raw.logs) ? raw.logs : [],
-        choiceLogs: Array.isArray(raw.choiceLogs) ? raw.choiceLogs : []
-      };
+      const raw2 = localStorage.getItem(KEY);
+      if (raw2) {
+        const parsed = migrate(JSON.parse(raw2));
+        if (parsed) return normalize(parsed);
+      }
+      const raw1 = localStorage.getItem(LEGACY_KEY);
+      if (raw1) {
+        const migrated = migrate(JSON.parse(raw1));
+        if (migrated) {
+          const st = normalize(migrated);
+          persist(st);
+          return st;
+        }
+      }
     } catch (e) {
-      return defaults();
+      try {
+        const broken = localStorage.getItem(KEY);
+        if (broken) localStorage.setItem(KEY + '.bak', broken);
+      } catch (e2) {}
+    }
+    return defaults();
+  }
+
+  function normalize(st) {
+    const base = defaults();
+    const out = { ...base, ...st };
+    out.presets = Array.isArray(st.presets) && st.presets.length ? st.presets : base.presets;
+    out.routines = Array.isArray(st.routines) ? st.routines : base.routines;
+    out.children = Array.isArray(st.children) && st.children.length ? st.children : base.children;
+    out.cards = st.cards && typeof st.cards === 'object' ? st.cards : {};
+    out.logs = Array.isArray(st.logs) ? st.logs : [];
+    out.choiceLogs = Array.isArray(st.choiceLogs) ? st.choiceLogs : [];
+    out.events = Array.isArray(st.events) ? st.events : [];
+    out.gate = { ...base.gate, ...(st.gate || {}) };
+    out.notifyQuiet = { ...base.notifyQuiet, ...(st.notifyQuiet || {}) };
+    if (!out.children.some(c => c.id === out.activeChildId)) out.activeChildId = out.children[0].id;
+    return out;
+  }
+
+  function persist(st) {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(st));
+      return true;
+    } catch (e) {
+      if (e && e.name === 'QuotaExceededError') {
+        try {
+          st.logs = st.logs.slice(0, 100);
+          localStorage.setItem(KEY, JSON.stringify(st));
+          return true;
+        } catch (e2) {}
+      }
+      memoryOnly = true;
+      return false;
     }
   }
 
   function save() {
-    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+    if (dayKey() !== state.gate.dayKey) {
+      state.gate.dayKey = dayKey();
+      state.gate.timerCountToday = 0;
+    }
+    if (dayKey() !== state.gate.notifyDayKey) {
+      state.gate.notifyDayKey = dayKey();
+      state.gate.notifiedToday = 0;
+    }
+    persist(state);
   }
 
-  function uid() {
-    return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  /* ---------- 이벤트 (로컬 기록만) ---------- */
+
+  function track(name, params) {
+    state.events.push({ n: name, t: Date.now(), p: params || null });
+    if (state.events.length > LIMIT.events) state.events.splice(0, state.events.length - LIMIT.events);
+  }
+
+  function eventCount(name) {
+    return state.events.filter(e => e.n === name).length;
   }
 
   /* ---------- 프리셋 ---------- */
@@ -662,41 +1156,104 @@ const MiriStore = (() => {
   function orderedPresets() {
     return [...state.presets].sort((a, b) => {
       if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
-      return a.time.localeCompare(b.time);
+      return String(a.time).localeCompare(String(b.time));
     });
   }
 
-  function nextPreset(now = new Date()) {
+  function nextPreset(now) {
     const list = orderedPresets();
     if (!list.length) return null;
-    const hhmm = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-    const upcoming = list
-      .filter(p => p.time >= hhmm)
-      .sort((a, b) => a.time.localeCompare(b.time))[0];
+    const d = now || new Date();
+    const hhmm = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+    const upcoming = list.filter(p => p.time >= hhmm).sort((a, b) => String(a.time).localeCompare(String(b.time)))[0];
     return upcoming || list[0];
   }
 
+  function presetByKey(key) {
+    return state.presets.find(p => p.key === key) || null;
+  }
+
   function updatePreset(key, patch) {
-    const p = state.presets.find(x => x.key === key);
+    const p = presetByKey(key);
     if (!p) return;
     Object.assign(p, patch);
+    save();
+  }
+
+  function customPresetCount() {
+    return state.presets.filter(p => p.custom).length;
+  }
+
+  function canAddPreset() {
+    return state.gate.plan !== 'free' || customPresetCount() < FREE.customPresets;
+  }
+
+  function addPreset({ label, icon, minutes, time }) {
+    const p = {
+      key: uid('p_'),
+      label: String(label || '전환').slice(0, 12),
+      icon: icon || '⏳',
+      minutes: clampMinutes(minutes),
+      time: time || '09:00',
+      pinned: false,
+      custom: true
+    };
+    state.presets.push(p);
+    save();
+    return p;
+  }
+
+  function removePreset(key) {
+    const idx = state.presets.findIndex(p => p.key === key && p.custom);
+    if (idx < 0) return false;
+    state.presets.splice(idx, 1);
+    save();
+    return true;
+  }
+
+  function clampMinutes(m) {
+    const n = Math.round(Number(m) || 1);
+    return Math.min(60, Math.max(1, n));
+  }
+
+  /* ---------- 루틴 ---------- */
+
+  function routines() {
+    return state.routines;
+  }
+
+  function routineById(id) {
+    return state.routines.find(r => r.id === id) || null;
+  }
+
+  function updateRoutineStep(routineId, stepIndex, minutes) {
+    const r = routineById(routineId);
+    if (!r || !r.steps[stepIndex]) return;
+    r.steps[stepIndex].minutes = clampMinutes(minutes);
     save();
   }
 
   /* ---------- 기록 ---------- */
 
   function addLog(entry) {
+    const start = entry.start || Date.now();
     const log = {
-      id: uid(),
-      label: entry.label,
+      id: uid('l'),
+      presetKey: entry.presetKey || null,
+      label: entry.label || '전환',
       icon: entry.icon || '⏳',
-      minutes: entry.minutes,
-      start: entry.start || Date.now(),
-      end: Date.now(),
-      outcome: entry.outcome || 'success'
+      minutes: Number(entry.minutes) || 1,
+      start,
+      end: entry.end || Date.now(),
+      outcome: entry.outcome || 'success',
+      extended: Number(entry.extended) || 0,
+      childId: entry.childId || state.activeChildId,
+      routineId: entry.routineId || null,
+      stepIndex: entry.stepIndex === undefined ? null : entry.stepIndex,
+      trial: !!entry.trial
     };
     state.logs.unshift(log);
-    if (state.logs.length > 400) state.logs.length = 400;
+    if (state.logs.length > LIMIT.logs) state.logs.length = LIMIT.logs;
     save();
     return log;
   }
@@ -708,33 +1265,45 @@ const MiriStore = (() => {
     save();
   }
 
-  function logsToday() {
-    const today = new Date().toDateString();
-    return state.logs.filter(l => new Date(l.start).toDateString() === today);
+  function logsOn(ts, childId) {
+    const key = dayKey(ts);
+    return state.logs.filter(l => dayKey(l.start) === key && (!childId || l.childId === childId));
+  }
+
+  function logsToday(childId) {
+    return logsOn(Date.now(), childId || state.activeChildId);
   }
 
   function counts(logs) {
-    return {
-      total: logs.length,
-      success: logs.filter(l => l.outcome === 'success').length,
-      extend: logs.filter(l => l.outcome === 'extend').length,
-      abort: logs.filter(l => l.outcome === 'abort').length
-    };
+    const out = { total: logs.length, success: 0, extend: 0, abort: 0 };
+    logs.forEach(l => {
+      if (l.outcome === 'success') out.success++;
+      else if (l.outcome === 'extend') out.extend++;
+      else if (l.outcome === 'abort') out.abort++;
+    });
+    return out;
   }
 
-  function weekStats(days = 7) {
+  function recordDays() {
+    return state.gate.plan === 'free' ? FREE.recordDays : 30;
+  }
+
+  function weekStats(days, childId) {
+    const n = days || recordDays();
     const out = [];
     const base = new Date();
     base.setHours(0, 0, 0, 0);
-    for (let i = days - 1; i >= 0; i--) {
+    const child = childId || state.activeChildId;
+    for (let i = n - 1; i >= 0; i--) {
       const d = new Date(base);
       d.setDate(base.getDate() - i);
-      const key = d.toDateString();
-      const logs = state.logs.filter(l => new Date(l.start).toDateString() === key);
+      const key = dayKey(d.getTime());
+      const logs = state.logs.filter(l => dayKey(l.start) === key && l.childId === child);
       out.push({
         date: d,
         key,
         label: '일월화수목금토'[d.getDay()],
+        dayNum: d.getDate(),
         total: logs.length,
         success: logs.filter(l => l.outcome === 'success').length
       });
@@ -743,57 +1312,373 @@ const MiriStore = (() => {
   }
 
   function weekSuccess() {
-    return weekStats(7).reduce((n, d) => n + d.success, 0);
+    return weekStats().reduce((n, d) => n + d.success, 0);
   }
 
   /* ---------- 카드 ---------- */
 
+  function cardsFor(setKey) {
+    return state.cards[setKey] || [];
+  }
+
+  function photoCount() {
+    return Object.values(state.cards).reduce((n, arr) => n + arr.length, 0);
+  }
+
   function pairFor(setKey) {
     const set = CARD_SETS.find(s => s.key === setKey) || CARD_SETS[0];
-    const pool = [...set.pool];
+    const custom = cardsFor(set.key).map(c => ({ id: c.id, label: c.label, media: true }));
+    const builtin = set.pool.map(c => ({ ...c, media: false }));
+    const pick = arr => arr.splice(Math.floor(Math.random() * arr.length), 1)[0];
+
+    // 사진을 올린 부모는 그 사진을 보여주려고 올린 것이다. 항상 1장은 포함한다.
     const picked = [];
-    for (let i = 0; i < 2 && pool.length; i++) {
-      picked.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
-    }
+    if (custom.length) picked.push(pick(custom));
+
+    const rest = [...custom, ...builtin];
+    while (picked.length < 2 && rest.length) picked.push(pick(rest));
+
     return { set, cards: picked };
   }
 
   function addChoice(entry) {
-    const log = { id: uid(), title: entry.title, emoji: entry.emoji, label: entry.label, at: Date.now() };
+    const log = {
+      id: uid('c'),
+      setKey: entry.setKey || null,
+      title: entry.title || '',
+      emoji: entry.emoji || '🃏',
+      label: entry.label || '',
+      at: Date.now(),
+      childId: state.activeChildId
+    };
     state.choiceLogs.unshift(log);
-    if (state.choiceLogs.length > 200) state.choiceLogs.length = 200;
+    if (state.choiceLogs.length > LIMIT.choices) state.choiceLogs.length = LIMIT.choices;
     save();
     return log;
   }
 
+  /* ---------- 아이 프로필 ---------- */
+
+  function activeChild() {
+    return state.children.find(c => c.id === state.activeChildId) || state.children[0];
+  }
+
+  function children() {
+    return state.children;
+  }
+
+  function canAddChild() {
+    return state.children.length < 2 && state.gate.plan !== 'free';
+  }
+
+  function addChild({ name, age, avatar }) {
+    if (state.children.length >= 2) return null;
+    const c = { id: uid('c_'), name: String(name || '아이').slice(0, 8), age: age || null, avatar: avatar || '🐻' };
+    state.children.push(c);
+    save();
+    return c;
+  }
+
+  function setActiveChild(id) {
+    if (!state.children.some(c => c.id === id)) return;
+    state.activeChildId = id;
+    save();
+  }
+
+  function updateChild(id, patch) {
+    const c = state.children.find(x => x.id === id);
+    if (!c) return;
+    Object.assign(c, patch);
+    save();
+  }
+
+  /* ---------- 게이트 ---------- */
+
+  function isPlus() {
+    return state.gate.plan !== 'free';
+  }
+
+  function setPlan(plan) {
+    state.gate.plan = plan === 'plus' || plan === 'family' ? plan : 'free';
+    save();
+  }
+
+  function timerUsage() {
+    save();
+    return { used: state.gate.timerCountToday, limit: isPlus() ? Infinity : FREE.timersPerDay };
+  }
+
+  function canStartTimer() {
+    if (isPlus()) return true;
+    save();
+    return state.gate.timerCountToday < FREE.timersPerDay;
+  }
+
+  function consumeTimer() {
+    save();
+    state.gate.timerCountToday += 1;
+    save();
+    return state.gate.timerCountToday;
+  }
+
+  /* ---------- 알림 예산 ---------- */
+
+  function canNotify() {
+    save();
+    return state.gate.notifiedToday < FREE.notifyPerDay;
+  }
+
+  function markNotify() {
+    save();
+    state.gate.notifiedToday += 1;
+    save();
+  }
+
+  function inQuietHours(now) {
+    const d = now || new Date();
+    const cur = d.getHours() * 60 + d.getMinutes();
+    const [fh, fm] = String(state.notifyQuiet.from).split(':').map(Number);
+    const [th, tm] = String(state.notifyQuiet.to).split(':').map(Number);
+    const from = fh * 60 + fm;
+    const to = th * 60 + tm;
+    if (from === to) return false;
+    return from < to ? cur >= from && cur < to : cur >= from || cur < to;
+  }
+
+  /* ---------- 진행 중 타이머 ---------- */
+
+  function savePending(p) {
+    try { localStorage.setItem(PENDING_KEY, JSON.stringify(p)); } catch (e) {}
+  }
+
+  function loadPending() {
+    try {
+      const raw = localStorage.getItem(PENDING_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function clearPending() {
+    try { localStorage.removeItem(PENDING_KEY); } catch (e) {}
+  }
+
+  /* ---------- 내보내기 / 가져오기 ---------- */
+
+  function dump() {
+    return {
+      app: 'miri',
+      schema: 2,
+      exportedAt: new Date().toISOString(),
+      data: clone(state)
+    };
+  }
+
+  function toCSV() {
+    const head = ['날짜', '시작', '전환', '분', '결과', '연장', '루틴', '단계'];
+    const rows = state.logs.map(l => {
+      const d = new Date(l.start);
+      return [
+        dayKey(l.start),
+        String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'),
+        l.label, l.minutes, l.outcome, l.extended || 0,
+        l.routineId || '', l.stepIndex === null || l.stepIndex === undefined ? '' : l.stepIndex
+      ].map(v => {
+        const s = String(v);
+        return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+      }).join(',');
+    });
+    return '\ufeff' + [head.join(','), ...rows].join('\n');
+  }
+
+  function importJSON(json) {
+    if (!json || json.app !== 'miri' || !json.data) throw new Error('형식이 맞지 않아요');
+    const inc = json.data;
+    if (!Array.isArray(inc.logs)) throw new Error('기록이 없어요');
+
+    const seen = new Set(state.logs.map(l => l.id));
+    let added = 0;
+    inc.logs.forEach(l => {
+      if (!l || !l.id || seen.has(l.id)) return;
+      state.logs.push({ ...l, childId: l.childId || state.activeChildId });
+      seen.add(l.id);
+      added++;
+    });
+    state.logs.sort((a, b) => b.start - a.start);
+    if (state.logs.length > LIMIT.logs) state.logs.length = LIMIT.logs;
+
+    const seenC = new Set(state.choiceLogs.map(c => c.id));
+    (inc.choiceLogs || []).forEach(c => {
+      if (!c || !c.id || seenC.has(c.id)) return;
+      state.choiceLogs.push({ ...c, childId: c.childId || state.activeChildId });
+      seenC.add(c.id);
+    });
+    state.choiceLogs.sort((a, b) => b.at - a.at);
+    if (state.choiceLogs.length > LIMIT.choices) state.choiceLogs.length = LIMIT.choices;
+
+    if (Array.isArray(inc.presets) && inc.presets.length) state.presets = inc.presets;
+    if (Array.isArray(inc.routines) && inc.routines.length) state.routines = inc.routines;
+
+    save();
+    return added;
+  }
+
   function reset() {
     state = defaults();
+    clearPending();
+    save();
+  }
+
+  /* ---------- IndexedDB (사진 카드) ---------- */
+
+  let dbPromise = null;
+
+  function db() {
+    if (dbPromise) return dbPromise;
+    dbPromise = new Promise((resolve, reject) => {
+      if (!('indexedDB' in window)) { reject(new Error('no idb')); return; }
+      const req = indexedDB.open('miri-media', 1);
+      req.onupgradeneeded = () => {
+        const d = req.result;
+        if (!d.objectStoreNames.contains('cards')) d.createObjectStore('cards', { keyPath: 'id' });
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    }).catch(() => null);
+    return dbPromise;
+  }
+
+  async function putCard(id, dataUrl) {
+    const d = await db();
+    if (!d) return false;
+    return new Promise(resolve => {
+      const tx = d.transaction('cards', 'readwrite');
+      tx.objectStore('cards').put({ id, dataUrl, at: Date.now() });
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => resolve(false);
+    });
+  }
+
+  async function getCard(id) {
+    const d = await db();
+    if (!d) return null;
+    return new Promise(resolve => {
+      const tx = d.transaction('cards', 'readonly');
+      const req = tx.objectStore('cards').get(id);
+      req.onsuccess = () => resolve(req.result ? req.result.dataUrl : null);
+      req.onerror = () => resolve(null);
+    });
+  }
+
+  async function allCards() {
+    const d = await db();
+    if (!d) return {};
+    return new Promise(resolve => {
+      const out = {};
+      const tx = d.transaction('cards', 'readonly');
+      const req = tx.objectStore('cards').openCursor();
+      req.onsuccess = () => {
+        const cur = req.result;
+        if (cur) { out[cur.value.id] = cur.value.dataUrl; cur.continue(); }
+        else resolve(out);
+      };
+      req.onerror = () => resolve({});
+    });
+  }
+
+  async function delCard(id) {
+    const d = await db();
+    if (!d) return;
+    return new Promise(resolve => {
+      const tx = d.transaction('cards', 'readwrite');
+      tx.objectStore('cards').delete(id);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => resolve();
+    });
+  }
+
+  function addCardMeta(setKey, label, id) {
+    if (!state.cards[setKey]) state.cards[setKey] = [];
+    state.cards[setKey].push({ id, label: String(label || '내 사진').slice(0, 12), at: Date.now() });
+    save();
+  }
+
+  function removeCardMeta(setKey, id) {
+    if (!state.cards[setKey]) return;
+    state.cards[setKey] = state.cards[setKey].filter(c => c.id !== id);
+    if (!state.cards[setKey].length) delete state.cards[setKey];
     save();
   }
 
   return {
     get state() { return state; },
+    get memoryOnly() { return memoryOnly; },
+    limits: { FREE, LIMIT },
     save,
+    dayKey,
+    uid,
+    track,
+    eventCount,
     presets: PRESET_BANK,
     cardSets: CARD_SETS,
     orderedPresets,
     nextPreset,
+    presetByKey,
     updatePreset,
+    canAddPreset,
+    customPresetCount,
+    addPreset,
+    removePreset,
+    clampMinutes,
+    routines,
+    routineById,
+    updateRoutineStep,
     addLog,
     setLogOutcome,
+    logsOn,
     logsToday,
     counts,
+    recordDays,
     weekStats,
     weekSuccess,
+    cardsFor,
+    photoCount,
     pairFor,
     addChoice,
-    reset
+    activeChild,
+    children,
+    canAddChild,
+    addChild,
+    setActiveChild,
+    updateChild,
+    isPlus,
+    setPlan,
+    timerUsage,
+    canStartTimer,
+    consumeTimer,
+    canNotify,
+    markNotify,
+    inQuietHours,
+    savePending,
+    loadPending,
+    clearPending,
+    dump,
+    toCSV,
+    importJSON,
+    reset,
+    putCard,
+    getCard,
+    allCards,
+    delCard,
+    addCardMeta,
+    removeCardMeta
   };
 })();
 
 </script>
 <script>
-/* 미리 — 화면과 타이머 */
+/* 미리 — 화면, 타이머, 알림 */
 (() => {
   'use strict';
 
@@ -801,19 +1686,32 @@ const MiriStore = (() => {
   const $ = sel => document.querySelector(sel);
   const $$ = sel => Array.from(document.querySelectorAll(sel));
 
-  const VIEWS = ['onboarding', 'home', 'cards', 'records', 'settings'];
+  const VIEWS = ['onboarding', 'home', 'cards', 'records', 'settings', 'paywall'];
   const FULL = ['kid', 'choice'];
+  const TAB_VIEWS = ['home', 'cards', 'records', 'settings'];
 
   let currentView = 'home';
+  let paywallReturn = 'home';
+  let mediaCache = {};
+  let deferredPrompt = null;
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const darkMedia = window.matchMedia('(prefers-color-scheme: dark)');
 
   /* ================= 공통 ================= */
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
 
   function toast(msg) {
     const el = $('#toast');
     el.textContent = msg;
     el.classList.add('on');
     clearTimeout(toast._t);
-    toast._t = setTimeout(() => el.classList.remove('on'), 2200);
+    toast._t = setTimeout(() => el.classList.remove('on'), 2400);
   }
 
   function fmtClock(ts) {
@@ -823,14 +1721,12 @@ const MiriStore = (() => {
 
   function go(view) {
     VIEWS.forEach(v => $('#view-' + v).classList.toggle('active', v === view));
-    const isFull = FULL.includes(view);
-    FULL.forEach(v => $('#view-' + v).classList.toggle('active', v === view));
-    if (!isFull) {
-      currentView = view;
-      $('#tabbar').hidden = view === 'onboarding';
-      $$('.tab').forEach(t => t.classList.toggle('on', t.dataset.tab === view));
-      window.scrollTo(0, 0);
-    }
+    FULL.forEach(v => $('#view-' + v).classList.remove('active'));
+    currentView = view;
+    $('#tabbar').hidden = !TAB_VIEWS.includes(view);
+    $$('.tab').forEach(t => t.classList.toggle('on', t.dataset.tab === view));
+    window.scrollTo(0, 0);
+
     if (view === 'home') renderHome();
     if (view === 'cards') renderCards();
     if (view === 'records') renderRecords();
@@ -848,7 +1744,19 @@ const MiriStore = (() => {
     go(currentView);
   }
 
-  /* ================= 소리 ================= */
+  /* ================= 테마 / 모션 ================= */
+
+  function applyTheme() {
+    const t = S.state.theme || 'auto';
+    const resolved = t === 'auto' ? (darkMedia.matches ? 'dark' : 'light') : t;
+    document.documentElement.dataset.theme = resolved;
+  }
+
+  function applyMotion() {
+    document.documentElement.classList.toggle('reduce-motion', reduceMotion.matches);
+  }
+
+  /* ================= 소리 / 진동 ================= */
 
   let audioCtx = null;
 
@@ -866,8 +1774,7 @@ const MiriStore = (() => {
     osc.stop(ctx.currentTime + at + dur + 0.05);
   }
 
-  function chime(kind) {
-    if (!S.state.sound) return;
+  function unlockAudio() {
     try {
       if (!audioCtx) {
         const AC = window.AudioContext || window.webkitAudioContext;
@@ -875,6 +1782,14 @@ const MiriStore = (() => {
         audioCtx = new AC();
       }
       if (audioCtx.state === 'suspended') audioCtx.resume();
+    } catch (e) {}
+  }
+
+  function chime(kind) {
+    if (!S.state.sound) return;
+    try {
+      unlockAudio();
+      if (!audioCtx) return;
       if (kind === 'end') {
         tone(523.25, 0, 0.5, 0.16);
         tone(659.25, 0.13, 0.5, 0.14);
@@ -887,6 +1802,49 @@ const MiriStore = (() => {
         tone(1174.66, 0.16, 0.3, 0.08);
       }
     } catch (e) {}
+  }
+
+  function buzz(pattern) {
+    if (!S.state.haptics) return;
+    if (!navigator.vibrate) return;
+    try { navigator.vibrate(pattern); } catch (e) {}
+  }
+
+  /* ================= 확인 다이얼로그 ================= */
+
+  let confirmResolve = null;
+
+  function askConfirm({ title, text, ok }) {
+    return new Promise(resolve => {
+      $('#confirm-title').textContent = title || '확인';
+      $('#confirm-text').textContent = text || '';
+      $('#confirm-ok').textContent = ok || '확인';
+      $('#confirm-input').hidden = true;
+      $('#confirm').classList.add('on');
+      confirmResolve = resolve;
+    });
+  }
+
+  function askText({ title, text, ok, placeholder, value }) {
+    return new Promise(resolve => {
+      $('#confirm-title').textContent = title || '입력';
+      $('#confirm-text').textContent = text || '';
+      $('#confirm-ok').textContent = ok || '저장';
+      const inp = $('#confirm-input');
+      inp.hidden = false;
+      inp.placeholder = placeholder || '';
+      inp.value = value || '';
+      $('#confirm').classList.add('on');
+      setTimeout(() => inp.focus(), 60);
+      confirmResolve = resolve;
+    });
+  }
+
+  function closeConfirm(result) {
+    $('#confirm').classList.remove('on');
+    const r = confirmResolve;
+    confirmResolve = null;
+    if (r) r(result);
   }
 
   /* ================= 온보딩 ================= */
@@ -910,6 +1868,7 @@ const MiriStore = (() => {
 
     $('#ob-next-1').addEventListener('click', () => {
       if (!ob.age) { toast('아이 나이를 골라주세요'); return; }
+      S.track('onb_age', { age: ob.age });
       obShow(2);
     });
 
@@ -923,9 +1882,13 @@ const MiriStore = (() => {
 
     $('#ob-next-2').addEventListener('click', () => {
       S.state.age = ob.age;
+      S.state.hardMoment = ob.moment;
+      S.state.children[0].age = ob.age;
       S.state.presets.forEach(p => { p.pinned = p.key === ob.moment; });
+      S.track('onb_moment', { moment: ob.moment });
       S.save();
-      const p = S.state.presets.find(x => x.key === ob.moment);
+
+      const p = S.presetByKey(ob.moment) || S.state.presets[0];
       if (p) {
         $('#ob-preview-em').textContent = p.icon;
         $('#ob-preview-lb').textContent = p.label;
@@ -937,9 +1900,8 @@ const MiriStore = (() => {
     $('#ob-start').addEventListener('click', () => {
       S.state.onboarded = true;
       S.save();
-      const p = S.state.presets.find(x => x.key === ob.moment) || S.state.presets[0];
-      currentView = 'home';
-      $('#tabbar').hidden = false;
+      S.track('onb_first_run', { minutes: 3 });
+      const p = S.presetByKey(ob.moment) || S.state.presets[0];
       go('home');
       startTimer({ label: p.label, icon: p.icon, minutes: 3, presetKey: p.key, isTrial: true });
     });
@@ -947,6 +1909,7 @@ const MiriStore = (() => {
     $('#ob-skip').addEventListener('click', () => {
       S.state.onboarded = true;
       S.save();
+      S.track('onb_skip', null);
       go('home');
     });
 
@@ -960,14 +1923,29 @@ const MiriStore = (() => {
     const days = ['일', '월', '화', '수', '목', '금', '토'];
     $('#home-date').textContent = `${now.getMonth() + 1}월 ${now.getDate()}일 ${days[now.getDay()]}요일`;
 
+    const child = S.activeChild();
+    const chip = $('#home-child');
+    chip.textContent = child.avatar || '🐰';
+    chip.onclick = () => cycleChild();
+
     const next = S.nextPreset(now);
     if (next) {
       $('#hero-em').textContent = next.icon;
       $('#hero-lb').textContent = next.label;
       $('#hero-sub').textContent = next.minutes + '분을 보여주고 시작하세요.';
-      $('#hero-start').onclick = () => startTimer({ ...next, presetKey: next.key });
-      $('#hero-change').onclick = () => openSheet(next.label, min => startTimer({ ...next, minutes: min, presetKey: next.key }));
+      $('#hero-start').onclick = () => startTimer({ label: next.label, icon: next.icon, minutes: next.minutes, presetKey: next.key });
+      $('#hero-change').onclick = () => openSheet(next.label, min => startTimer({ label: next.label, icon: next.icon, minutes: min, presetKey: next.key }));
     }
+
+    const usage = S.timerUsage();
+    $('#hero-usage').textContent = S.isPlus()
+      ? '오늘 ' + S.logsToday().length + '번 넘어갔어요'
+      : (usage.used >= usage.limit
+        ? '오늘 무료 ' + usage.limit + '번을 다 썼어요'
+        : '오늘 ' + usage.used + '/' + usage.limit + '번 사용');
+
+    renderInstallBanner();
+    renderRoutines();
 
     const today = S.logsToday();
     const c = S.counts(today);
@@ -977,49 +1955,110 @@ const MiriStore = (() => {
 
     const grid = $('#preset-grid');
     grid.innerHTML = S.orderedPresets().map(p => `
-      <button class="preset" data-key="${p.key}">
+      <button class="preset" data-key="${esc(p.key)}">
         ${p.pinned ? '<span class="pin">자주</span>' : ''}
-        <span class="em">${p.icon}</span>
-        <span class="lb">${p.label}</span>
-        <span class="mt" data-min="${p.key}">${p.minutes}분 · ${p.time}</span>
+        <span class="em">${esc(p.icon)}</span>
+        <span class="lb">${esc(p.label)}</span>
+        <span class="mt" data-min="${esc(p.key)}">${p.minutes}분 · ${esc(p.time)}</span>
         <span class="go">시계 켜기 →</span>
       </button>
     `).join('');
 
     grid.querySelectorAll('.preset').forEach(btn => {
       btn.addEventListener('click', e => {
-        const p = S.orderedPresets().find(x => x.key === btn.dataset.key);
+        const p = S.presetByKey(btn.dataset.key);
         if (!p) return;
         if (e.target.closest('[data-min]')) {
           e.stopPropagation();
-          openSheet(p.label, min => startTimer({ ...p, minutes: min, presetKey: p.key }));
+          openSheet(p.label, min => startTimer({ label: p.label, icon: p.icon, minutes: min, presetKey: p.key }));
           return;
         }
-        startTimer({ ...p, presetKey: p.key });
+        startTimer({ label: p.label, icon: p.icon, minutes: p.minutes, presetKey: p.key });
       });
     });
 
-    const logs = S.state.logs.slice(0, 4);
-    $('#home-log-count').textContent = S.state.logs.length ? `전체 ${S.state.logs.length}회` : '';
+    const logs = S.state.logs.filter(l => l.childId === S.state.activeChildId).slice(0, 4);
+    $('#home-log-count').textContent = logs.length ? `${logs.length}건` : '';
     $('#home-logs').innerHTML = logs.length
       ? logs.map(logRow).join('')
       : `<div class="empty">첫 전환을 기록해 보세요.<br>위에서 시계를 켜면 여기에 쌓입니다.</div>`;
   }
 
+  function cycleChild() {
+    const list = S.children();
+    if (list.length < 2) { toast('아이를 추가하면 여기서 바꿀 수 있어요'); return; }
+    const idx = list.findIndex(c => c.id === S.state.activeChildId);
+    const nextChild = list[(idx + 1) % list.length];
+    S.setActiveChild(nextChild.id);
+    toast(nextChild.name + '(으)로 바꿨어요');
+    renderHome();
+  }
+
   const OUTCOME = {
-    success: { cls: 's', text: '성공' },
-    extend: { cls: 'e', text: '연장' },
-    abort: { cls: 'a', text: '중단' }
+    success: { cls: 's', text: '성공', icon: '✓' },
+    extend: { cls: 'e', text: '연장', icon: '＋' },
+    abort: { cls: 'a', text: '중단', icon: '–' }
   };
 
   function logRow(l) {
     const o = OUTCOME[l.outcome] || OUTCOME.success;
     return `<div class="log-item">
-      <span class="log-em">${l.icon}</span>
-      <span class="log-main">${l.label}</span>
+      <span class="log-em">${esc(l.icon)}</span>
+      <span class="log-main">${esc(l.label)}</span>
       <span class="log-time">${fmtClock(l.start)} · ${l.minutes}분</span>
       <span class="tag ${o.cls}">${o.text}</span>
     </div>`;
+  }
+
+  /* ---------- 설치 유도 ---------- */
+
+  function isStandalone() {
+    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  }
+
+  function renderInstallBanner() {
+    const b = $('#install-banner');
+    const shouldShow = !isStandalone() && !S.state.installHintSeen && S.state.logs.length >= 1;
+    b.hidden = !shouldShow;
+    if (!shouldShow) return;
+    $('#install-banner-sub').textContent = isIOS()
+      ? 'Safari 공유 → 홈 화면에 추가. 그래야 알림도 와요.'
+      : '앱처럼 열리고, 알림도 받을 수 있어요.';
+  }
+
+  function isIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  }
+
+  /* ---------- 루틴 ---------- */
+
+  function renderRoutines() {
+    const section = $('#routine-section');
+    const list = S.routines();
+    if (!list.length) { section.hidden = true; return; }
+    section.hidden = false;
+
+    const plus = S.isPlus();
+    $('#routine-lock').innerHTML = plus ? '' : '<span class="lock-pill">Plus</span>';
+
+    $('#routine-list').innerHTML = list.map(r => `
+      <button class="routine-tile ${plus ? '' : 'locked'}" data-routine="${esc(r.id)}">
+        <span class="em">${esc(r.icon)}</span>
+        <span class="rt-main">
+          <span class="rt-name">${esc(r.name)}</span>
+          <span class="rt-steps">${r.steps.map(s => esc(s.label)).join(' → ')}</span>
+        </span>
+        <span class="rt-lock">${plus ? '→' : '🔒'}</span>
+      </button>
+    `).join('');
+
+    $$('#routine-list .routine-tile').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (!S.isPlus()) { showPaywall('routine'); return; }
+        startRoutine(btn.dataset.routine);
+      });
+    });
   }
 
   /* ================= 시간 선택 시트 ================= */
@@ -1029,6 +2068,7 @@ const MiriStore = (() => {
   function openSheet(title, cb) {
     sheetCb = cb;
     $('#sheet-title').textContent = title + ' — 몇 분?';
+    $('#sheet-custom').value = '';
     $('#sheet').classList.add('on');
   }
 
@@ -1037,37 +2077,86 @@ const MiriStore = (() => {
     sheetCb = null;
   }
 
+  function sheetPick(min) {
+    const cb = sheetCb;
+    const m = S.clampMinutes(min);
+    closeSheet();
+    if (cb) cb(m);
+  }
+
   /* ================= 카드 ================= */
 
+  let choiceState = null;
+  let photoSetKey = 'clothes';
+
   function renderCards() {
-    $('#set-list').innerHTML = S.cardSets.map(s => `
-      <button class="set-tile" data-key="${s.key}">
-        <span class="em">${s.emoji}</span>
-        <span class="nm">${s.title}</span>
+    $('#set-list').innerHTML = S.cardSets.map(s => {
+      const n = S.cardsFor(s.key).length;
+      return `
+      <button class="set-tile" data-key="${esc(s.key)}">
+        <span class="em">${esc(s.emoji)}</span>
+        <span class="nm">${esc(s.title)}${n ? ' <span class="muted">+' + n + '</span>' : ''}</span>
         <span class="arw">→</span>
-      </button>
-    `).join('');
+      </button>`;
+    }).join('');
 
     $$('#set-list .set-tile').forEach(btn => {
       btn.addEventListener('click', () => openChoice(btn.dataset.key));
     });
 
+    renderPhotoSection();
+
     const logs = S.state.choiceLogs.slice(0, 6);
     $('#choice-logs').innerHTML = logs.length
       ? logs.map(l => `<div class="log-item">
-          <span class="log-em">${l.emoji}</span>
-          <span class="log-main">${l.label}</span>
-          <span class="log-time">${l.title}</span>
+          <span class="log-em">${l.emoji && l.emoji.startsWith('data:') ? '📷' : esc(l.emoji)}</span>
+          <span class="log-main">${esc(l.label)}</span>
+          <span class="log-time">${esc(l.title)}</span>
           <span class="log-time">${fmtClock(l.at)}</span>
         </div>`).join('')
       : `<div class="empty">아이가 고른 기록이 여기에 남습니다.<br>부모가 뒤집기 어려워지는 장치예요.</div>`;
   }
 
-  let choiceState = null;
+  function renderPhotoSection() {
+    const plus = S.isPlus();
+    $('#photo-count').textContent = S.photoCount() ? S.photoCount() + '장' : '';
+
+    $('#photo-set').innerHTML = S.cardSets.map(s =>
+      `<button class="chip-btn ${s.key === photoSetKey ? 'on' : ''}" data-set="${esc(s.key)}">${esc(s.emoji)} ${esc(s.title)}</button>`
+    ).join('');
+
+    $$('#photo-set .chip-btn').forEach(b => {
+      b.addEventListener('click', () => { photoSetKey = b.dataset.set; renderPhotoSection(); });
+    });
+
+    const items = S.cardsFor(photoSetKey);
+    $('#photo-list').innerHTML = items.map(c => `
+      <div class="photo-thumb">
+        <img src="${esc(mediaCache[c.id] || '')}" alt="${esc(c.label)}">
+        <button data-del="${esc(c.id)}" aria-label="삭제">✕</button>
+      </div>
+    `).join('');
+
+    $$('#photo-list [data-del]').forEach(b => {
+      b.addEventListener('click', async () => {
+        const ok = await askConfirm({ title: '사진을 지울까요?', text: '이 카드는 다시 나오지 않아요.', ok: '지우기' });
+        if (!ok) return;
+        const id = b.dataset.del;
+        S.removeCardMeta(photoSetKey, id);
+        delete mediaCache[id];
+        await S.delCard(id);
+        renderPhotoSection();
+        toast('지웠어요');
+      });
+    });
+
+    $('#photo-add').textContent = plus ? '사진 고르기' : 'Plus에서 열기';
+  }
 
   function openChoice(setKey) {
     showChoicePair(setKey);
     openFull('choice');
+    S.track('choice_open', { setKey });
   }
 
   function showChoicePair(setKey) {
@@ -1075,12 +2164,20 @@ const MiriStore = (() => {
     choiceState = { set, cards, picked: false };
     $('#choice-q').textContent = set.title;
     $('#choice-foot').style.display = 'none';
-    $('#choice-grid').innerHTML = cards.map((c, i) => `
-      <button class="choice-card" data-i="${i}">
-        <span class="em">${c.emoji}</span>
-        <span class="lb">${c.label}</span>
-      </button>
-    `).join('');
+    $('#choice-grid').innerHTML = cards.map((c, i) => {
+      if (c.media) {
+        const src = mediaCache[c.id] || '';
+        return `<button class="choice-card photo" data-i="${i}">
+          <span class="em photo"><img src="${esc(src)}" alt="${esc(c.label)}"></span>
+          <span class="lb">${esc(c.label)}</span>
+        </button>`;
+      }
+      return `<button class="choice-card" data-i="${i}">
+        <span class="em">${esc(c.emoji)}</span>
+        <span class="lb">${esc(c.label)}</span>
+      </button>`;
+    }).join('');
+
     $('#choice-grid').querySelectorAll('.choice-card').forEach(btn => {
       btn.addEventListener('click', () => pickCard(Number(btn.dataset.i)));
     });
@@ -1091,34 +2188,56 @@ const MiriStore = (() => {
     choiceState.picked = true;
     const card = choiceState.cards[i];
     chime('pick');
+    buzz(30);
     $('#choice-grid').querySelectorAll('.choice-card').forEach((el, idx) => {
       el.classList.toggle('pick', idx === i);
       el.classList.toggle('dim', idx !== i);
     });
-    S.addChoice({ title: choiceState.set.title, emoji: card.emoji, label: card.label });
-    setTimeout(() => { $('#choice-foot').style.display = 'flex'; }, 450);
+    S.addChoice({
+      setKey: choiceState.set.key,
+      title: choiceState.set.title,
+      emoji: card.media ? '📷' : card.emoji,
+      label: card.label
+    });
+    S.track('choice_pick', { setKey: choiceState.set.key, label: card.label });
+    setTimeout(() => { $('#choice-foot').style.display = 'flex'; }, reduceMotion.matches ? 0 : 450);
   }
 
   /* ================= 기록 ================= */
 
   function renderRecords() {
-    const week = S.weekStats(7);
-    const today = S.logsToday();
-    const c = S.counts(today);
-    const all = S.counts(S.state.logs);
+    const child = S.activeChild();
+    const all = S.children();
+    $('#rec-child').innerHTML = all.length > 1
+      ? all.map(c => `<button class="chip-btn ${c.id === child.id ? 'on' : ''}" data-child="${esc(c.id)}">${esc(c.avatar)} ${esc(c.name)}</button>`).join('')
+      : '';
+    $$('#rec-child [data-child]').forEach(b => {
+      b.addEventListener('click', () => { S.setActiveChild(b.dataset.child); renderRecords(); });
+    });
 
-    $('#st-week').textContent = S.weekSuccess();
-    $('#st-total').textContent = S.state.logs.length;
-    $('#st-rate').textContent = all.total ? Math.round((all.success / all.total) * 100) + '%' : '–';
+    const days = S.recordDays();
+    const week = S.weekStats(days, child.id);
+    const today = S.logsToday(child.id);
+    const logs = S.state.logs.filter(l => l.childId === child.id);
+    const allCounts = S.counts(logs);
+
+    $('#st-week').textContent = week.reduce((n, d) => n + d.success, 0);
+    $('#st-total').textContent = logs.length;
+    $('#st-rate').textContent = allCounts.total ? Math.round((allCounts.success / allCounts.total) * 100) + '%' : '–';
+
+    $('#chart-title').textContent = '최근 ' + days + '일';
+    $('#chart-hint').textContent = S.isPlus() ? '' : '30일은 Plus';
 
     const max = Math.max(1, ...week.map(d => d.success));
-    const todayKey = new Date().toDateString();
+    const todayKey = S.dayKey();
+    const dense = days > 10;
+    $('#chart').className = 'chart' + (dense ? ' dense' : '');
     $('#chart').innerHTML = week.map(d => `
       <div class="bar-col ${d.key === todayKey ? 'today' : ''}">
         <div class="bar-track">
           <div class="bar-fill" style="height:${Math.round((d.success / max) * 100)}%"></div>
         </div>
-        <span class="d">${d.label}</span>
+        <span class="d">${dense ? (d.dayNum % 5 === 0 ? d.dayNum : '') : d.label}</span>
       </div>
     `).join('');
 
@@ -1130,21 +2249,65 @@ const MiriStore = (() => {
   /* ================= 설정 ================= */
 
   function renderSettings() {
-    $$('#set-age button').forEach(b => b.classList.toggle('on', Number(b.dataset.age) === S.state.age));
-    $('#set-sound').classList.toggle('on', !!S.state.sound);
-    $('#set-notify').textContent = S.state.notify ? '켜짐' : '켜기';
+    const child = S.activeChild();
 
-    const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    $('#child-chips').innerHTML = S.children().map(c => `
+      <button class="chip-btn ${c.id === child.id ? 'on' : ''}" data-child="${esc(c.id)}">
+        ${esc(c.avatar)} ${esc(c.name)}
+      </button>
+    `).join('');
+    $$('#child-chips [data-child]').forEach(b => {
+      b.addEventListener('click', async () => {
+        const id = b.dataset.child;
+        if (S.state.activeChildId !== id) {
+          S.setActiveChild(id);
+          renderSettings();
+          return;
+        }
+        const c = S.activeChild();
+        const name = await askText({ title: '이름 바꾸기', text: '아이 이름이나 별명', ok: '저장', value: c.name });
+        if (name !== null && name.trim()) {
+          S.updateChild(c.id, { name: name.trim().slice(0, 8) });
+          renderSettings();
+        }
+      });
+    });
+    $('#child-add').textContent = S.canAddChild() ? '아이 추가' : '추가';
+
+    $$('#set-age button').forEach(b => b.classList.toggle('on', Number(b.dataset.age) === (child.age || S.state.age)));
+    $('#set-sound').classList.toggle('on', !!S.state.sound);
+    $('#set-haptics').classList.toggle('on', !!S.state.haptics);
+    $('#haptics-row').hidden = !navigator.vibrate;
+    $$('#set-theme button').forEach(b => b.classList.toggle('on', (S.state.theme || 'auto') === b.dataset.theme));
+
+    const supported = 'Notification' in window;
+    $('#set-notify').textContent = S.state.notify ? '끄기' : '켜기';
+    if (!supported) {
+      $('#set-notify-state').textContent = '이 브라우저는 지원하지 않아요';
+    } else if (Notification.permission === 'denied') {
+      $('#set-notify-state').textContent = '차단됨 — 브라우저 설정에서 허용';
+    } else if (Notification.permission === 'granted') {
+      $('#set-notify-state').textContent = S.state.notify ? '켜짐' : '꺼짐';
+    } else {
+      $('#set-notify-state').textContent = '아직 허용 안 함';
+    }
+
+    $('#notify-note').textContent = isIOS() && !isStandalone()
+      ? '아이폰은 홈 화면에 추가해야 알림이 와요. 앱을 닫으면 알림이 늦을 수 있어요.'
+      : '앱을 닫으면 알림이 늦을 수 있어요. 돌아오면 바로 알려드려요.';
+
+    const standalone = isStandalone();
     $('#install-block').hidden = standalone;
 
     $('#preset-settings').innerHTML = S.state.presets.map(p => `
       <div class="set-item">
-        <span class="k">${p.icon} ${p.label}</span>
-        <div class="row" style="gap:8px">
-          <input class="time-input" type="time" value="${p.time}" data-key="${p.key}">
-          <div class="seg" data-seg="${p.key}">
-            ${[5, 10, 15, 20].map(m => `<button data-min="${m}" class="${p.minutes === m ? 'on' : ''}">${m}</button>`).join('')}
+        <span class="k">${esc(p.icon)} ${esc(p.label)}</span>
+        <div class="row wrap" style="gap:8px">
+          <input class="time-input" type="time" value="${esc(p.time)}" data-key="${esc(p.key)}" aria-label="${esc(p.label)} 시간">
+          <div class="seg" data-seg="${esc(p.key)}">
+            ${[3, 5, 10, 15].map(m => `<button data-min="${m}" class="${p.minutes === m ? 'on' : ''}">${m}</button>`).join('')}
           </div>
+          ${p.custom ? `<button class="btn ghost sm" data-remove="${esc(p.key)}">삭제</button>` : ''}
         </div>
       </div>
     `).join('');
@@ -1165,35 +2328,132 @@ const MiriStore = (() => {
         renderSettings();
       });
     });
+
+    $$('#preset-settings [data-remove]').forEach(b => {
+      b.addEventListener('click', async () => {
+        const ok = await askConfirm({ title: '전환을 지울까요?', text: '기록은 그대로 남아요.', ok: '지우기' });
+        if (!ok) return;
+        S.removePreset(b.dataset.remove);
+        renderSettings();
+      });
+    });
+
+    renderRoutineSettings();
+  }
+
+  function renderRoutineSettings() {
+    const plus = S.isPlus();
+    $('#routine-plan').innerHTML = plus ? '' : '<span class="lock-pill">Plus</span>';
+
+    $('#routine-settings').innerHTML = S.routines().map(r => `
+      <div class="set-item" style="flex-direction:column;align-items:stretch;gap:10px">
+        <div class="row between">
+          <span class="k">${esc(r.icon)} ${esc(r.name)}</span>
+          <span class="muted">${r.steps.length}단계</span>
+        </div>
+        ${r.steps.map((s, i) => `
+          <div class="row between" style="gap:8px">
+            <span class="muted" style="flex:1">${esc(s.icon)} ${esc(s.label)}</span>
+            <div class="seg" data-routine="${esc(r.id)}" data-step="${i}">
+              ${[3, 5, 10, 15, 20].map(m => `<button data-min="${m}" class="${s.minutes === m ? 'on' : ''}" ${plus ? '' : 'disabled'}>${m}</button>`).join('')}
+            </div>
+          </div>`).join('')}
+        ${plus ? '' : '<button class="btn ghost sm" data-upgrade="routine">Plus로 열기</button>'}
+      </div>
+    `).join('');
+
+    $$('#routine-settings .seg').forEach(seg => {
+      seg.addEventListener('click', e => {
+        const b = e.target.closest('button[data-min]');
+        if (!b || !S.isPlus()) return;
+        S.updateRoutineStep(seg.dataset.routine, Number(seg.dataset.step), Number(b.dataset.min));
+        renderRoutineSettings();
+      });
+    });
+
+    $$('#routine-settings [data-upgrade]').forEach(b => {
+      b.addEventListener('click', () => showPaywall('routine'));
+    });
+  }
+
+  /* ================= 페이월 ================= */
+
+  const PAYWALL_COPY = {
+    timer: { title: '오늘 5번을 다 썼어요', why: '내일 다시 무료로 쓸 수 있어요. Plus는 횟수 제한이 없습니다.' },
+    routine: { title: '매일 아침 4단계를 한 번에', why: '기상부터 등원까지, 단계마다 시계를 켜지 않아도 됩니다.' },
+    photo: { title: '내 물건 사진으로 카드 만들기', why: '이모지보다 아이가 바로 알아봅니다.' },
+    child: { title: '아이 두 명까지', why: '형제는 같은 규칙으로 각자의 기록을 가집니다.' },
+    preset: { title: '전환을 더 만들기', why: '우리 집 하루에 맞게 직접 추가할 수 있어요.' }
+  };
+
+  function showPaywall(trigger) {
+    const copy = PAYWALL_COPY[trigger] || PAYWALL_COPY.routine;
+    $('#paywall-title').textContent = copy.title;
+    $('#paywall-why').textContent = copy.why;
+    if (TAB_VIEWS.includes(currentView)) paywallReturn = currentView;
+    S.track('paywall_view', { trigger });
+    go('paywall');
   }
 
   /* ================= 타이머 ================= */
 
   let timer = null;
   let ticking = null;
-  let notifyTimer = null;
+  let warnTimer = null;
+  let endPanelLogId = null;
+  let endPanelTimer = null;
+  let endMode = 'normal';
+  let extendUsed = false;
+  let routineRun = null;
+  let wakeLock = null;
 
   // 모래가 병 위쪽 20%를 비워두어야 토끼가 잘리지 않는다
   const FILL_MAX = 0.8;
-  const fillPct = pct => (pct * FILL_MAX).toFixed(3) + '%';
+  const fillPct = pct => (Math.max(0, Math.min(100, pct)) * FILL_MAX).toFixed(3) + '%';
 
-  function startTimer({ label, icon, minutes, presetKey, isTrial }) {
+  function timerGate() {
+    if (S.isPlus()) return true;
+    if (!S.canStartTimer()) { showPaywall('timer'); return false; }
+    return true;
+  }
+
+  function startTimer(opts) {
+    if (!opts.isTrial && !opts.fromRoutine && !timerGate()) return;
+
     stopTimer(true);
 
     const start = Date.now();
     timer = {
-      label,
-      icon: icon || '⏳',
-      minutes,
+      label: opts.label,
+      icon: opts.icon || '⏳',
+      minutes: opts.minutes,
       start,
-      endsAt: start + minutes * 60000,
-      totalMs: minutes * 60000,
-      presetKey: presetKey || null,
+      endsAt: start + opts.minutes * 60000,
+      totalMs: opts.minutes * 60000,
+      presetKey: opts.presetKey || null,
+      routineId: opts.routineId || null,
+      stepIndex: opts.stepIndex === undefined ? null : opts.stepIndex,
+      childId: S.state.activeChildId,
       warned: false,
-      logId: null,
-      isTrial: !!isTrial
+      isTrial: !!opts.isTrial
     };
+    extendUsed = false;
+    S.track('timer_start', { minutes: opts.minutes, preset: opts.presetKey || null, trial: !!opts.isTrial });
+    if (!S.isPlus() && !opts.isTrial) S.consumeTimer();
 
+    paintKid();
+    openFull('kid');
+    unlockAudio();
+    chime('start');
+    requestWakeLock();
+    persist();
+    scheduleNotifications(timer);
+
+    ticking = setInterval(tick, 100);
+    tick();
+  }
+
+  function paintKid() {
     $('#sand').style.height = fillPct(100);
     $('#bunny').style.bottom = fillPct(100);
     $('#bunny').className = 'bunny';
@@ -1201,32 +2461,26 @@ const MiriStore = (() => {
     $('#door').className = 'door';
     $('#end-panel').className = 'end-panel';
     $('#kid-wrap').className = 'kid-wrap';
-
-    openFull('kid');
-    unlockAudio();
-
-    ticking = setInterval(tick, 100);
-    tick();
-
-    if (S.state.notify && 'Notification' in window && Notification.permission === 'granted') {
-      notifyTimer = setTimeout(() => {
-        if (!timer) return;
-        try {
-          new Notification('미리', { body: timer.label + ' 30초 남았어요. 곧 끝난다고 알려주세요.', silent: false });
-        } catch (e) {}
-      }, Math.max(0, timer.endsAt - 30000 - Date.now()));
-    }
+    renderDots();
   }
 
-  function unlockAudio() {
-    try {
-      if (!audioCtx) {
-        const AC = window.AudioContext || window.webkitAudioContext;
-        if (!AC) return;
-        audioCtx = new AC();
-      }
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-    } catch (e) {}
+  function renderDots() {
+    const box = $('#routine-dots');
+    if (!routineRun) { box.innerHTML = ''; return; }
+    box.innerHTML = routineRun.routine.steps.map((s, i) => {
+      const cls = i < routineRun.index ? 'done' : (i === routineRun.index ? 'on' : '');
+      return `<i class="${cls}"></i>`;
+    }).join('');
+  }
+
+  function persist() {
+    if (!timer) { S.clearPending(); return; }
+    S.savePending({
+      label: timer.label, icon: timer.icon, minutes: timer.minutes,
+      start: timer.start, endsAt: timer.endsAt, totalMs: timer.totalMs,
+      presetKey: timer.presetKey, routineId: timer.routineId, stepIndex: timer.stepIndex,
+      childId: timer.childId, warned: timer.warned, isTrial: timer.isTrial
+    });
   }
 
   function tick() {
@@ -1239,11 +2493,15 @@ const MiriStore = (() => {
 
     if (remain <= 30000 && remain > 0 && !timer.warned) {
       timer.warned = true;
+      persist();
       const bunny = $('#bunny');
-      bunny.classList.add('wave');
+      if (!reduceMotion.matches) {
+        bunny.classList.add('wave');
+        setTimeout(() => bunny.classList.remove('wave'), 3400);
+      }
       chime('soon');
-      if (navigator.vibrate) { try { navigator.vibrate([120, 80, 120]); } catch (e) {} }
-      setTimeout(() => bunny.classList.remove('wave'), 3400);
+      buzz([120, 80, 120]);
+      S.track('timer_warn30', { preset: timer.presetKey });
     }
 
     if (remain <= 0) finish();
@@ -1254,11 +2512,17 @@ const MiriStore = (() => {
     const t = timer;
     clearInterval(ticking);
     ticking = null;
-    clearTimeout(notifyTimer);
-    notifyTimer = null;
+    clearTimeout(warnTimer);
+    warnTimer = null;
 
-    const log = S.addLog({ label: t.label, icon: t.icon, minutes: t.minutes, start: t.start, outcome: 'success' });
+    const log = S.addLog({
+      label: t.label, icon: t.icon, minutes: t.minutes,
+      start: t.start, end: Date.now(), outcome: 'success',
+      childId: t.childId, routineId: t.routineId, stepIndex: t.stepIndex, trial: t.isTrial
+    });
     timer = null;
+    S.clearPending();
+    S.track('timer_end', { preset: t.presetKey, outcome: 'success' });
 
     $('#sand').style.height = fillPct(0);
     $('#bunny').style.bottom = fillPct(0);
@@ -1268,41 +2532,260 @@ const MiriStore = (() => {
     bunny.classList.add('leave');
 
     chime('end');
-    if (navigator.vibrate) { try { navigator.vibrate(180); } catch (e) {} }
+    buzz(180);
 
+    const delay = reduceMotion.matches ? 0 : 1200;
     setTimeout(() => {
       endPanelLogId = log.id;
+      setupEndPanel();
       $('#end-panel').classList.add('on');
-    }, 1200);
+    }, delay);
 
     endPanelTimer = setTimeout(() => {
       if ($('#view-kid').classList.contains('active')) closeKid();
-    }, 16000);
+    }, 16000 + delay);
   }
 
-  let endPanelLogId = null;
-  let endPanelTimer = null;
+  function setupEndPanel() {
+    const hasNext = routineRun && routineRun.index < routineRun.routine.steps.length - 1;
+    if (hasNext) {
+      endMode = 'routine';
+      const nextStep = routineRun.routine.steps[routineRun.index + 1];
+      $('#end-hint').textContent = '다음 단계';
+      $('#end-extend').textContent = '여기서 그만';
+      $('#end-done').textContent = '다음: ' + nextStep.label;
+    } else {
+      endMode = 'normal';
+      $('#end-hint').textContent = '부모님만';
+      $('#end-extend').textContent = extendUsed ? '3분 더 (사용함)' : '3분 더';
+      $('#end-extend').disabled = extendUsed;
+      $('#end-done').textContent = routineRun ? '다 끝났어요' : '잘 넘어갔어요';
+    }
+  }
 
   function closeKid() {
     clearTimeout(endPanelTimer);
     endPanelTimer = null;
     endPanelLogId = null;
+    endMode = 'normal';
+    routineRun = null;
     $('#end-panel').className = 'end-panel';
+    $('#routine-dots').innerHTML = '';
     $('#view-kid').classList.remove('active');
+    releaseWakeLock();
     closeFull();
   }
 
   function stopTimer(silent) {
     clearInterval(ticking);
     ticking = null;
-    clearTimeout(notifyTimer);
-    notifyTimer = null;
+    clearTimeout(warnTimer);
+    warnTimer = null;
     clearTimeout(endPanelTimer);
     endPanelTimer = null;
-    if (timer && !silent) {
-      S.addLog({ label: timer.label, icon: timer.icon, minutes: timer.minutes, start: timer.start, outcome: 'abort' });
+    if (timer) {
+      if (!silent) {
+        S.addLog({
+          label: timer.label, icon: timer.icon, minutes: timer.minutes,
+          start: timer.start, end: Date.now(), outcome: 'abort',
+          childId: timer.childId, routineId: timer.routineId, stepIndex: timer.stepIndex
+        });
+        S.track('timer_abort', { preset: timer.presetKey, elapsed: Date.now() - timer.start });
+      }
+      S.clearPending();
     }
     timer = null;
+  }
+
+  /* ---------- 루틴 실행 ---------- */
+
+  function startRoutine(id) {
+    const r = S.routineById(id);
+    if (!r || !r.steps.length) return;
+    routineRun = { routine: r, index: 0 };
+    startRoutineStep();
+  }
+
+  function startRoutineStep() {
+    const step = routineRun.routine.steps[routineRun.index];
+    startTimer({
+      label: step.label, icon: step.icon, minutes: step.minutes,
+      routineId: routineRun.routine.id, stepIndex: routineRun.index,
+      fromRoutine: true
+    });
+  }
+
+  /* ---------- 복원 ---------- */
+
+  function restorePending() {
+    const p = S.loadPending();
+    if (!p) return false;
+    const now = Date.now();
+
+    if (p.endsAt && now < p.endsAt) {
+      timer = {
+        label: p.label, icon: p.icon, minutes: p.minutes, start: p.start,
+        endsAt: p.endsAt, totalMs: p.totalMs || p.minutes * 60000,
+        presetKey: p.presetKey, routineId: p.routineId, stepIndex: p.stepIndex,
+        childId: p.childId || S.state.activeChildId,
+        warned: now <= p.endsAt - 30000,
+        isTrial: !!p.isTrial
+      };
+      extendUsed = false;
+      if (timer.routineId) {
+        const r = S.routineById(timer.routineId);
+        if (r) routineRun = { routine: r, index: timer.stepIndex || 0 };
+      }
+      paintKid();
+      openFull('kid');
+      ticking = setInterval(tick, 100);
+      tick();
+      S.track('timer_restore', { expired: false });
+      toast('하던 시계를 이어갑니다');
+      return true;
+    }
+
+    const ageMs = now - (p.endsAt || now);
+    S.clearPending();
+    S.track('timer_restore', { expired: true });
+    if (ageMs <= 12 * 3600000) {
+      S.addLog({
+        label: p.label, icon: p.icon, minutes: p.minutes,
+        start: p.start, end: p.endsAt || now, outcome: 'success',
+        childId: p.childId || S.state.activeChildId,
+        routineId: p.routineId, stepIndex: p.stepIndex
+      });
+      setTimeout(() => toast('아까 그 시계, 이미 끝났어요'), 400);
+    }
+    return false;
+  }
+
+  /* ---------- 알림 ---------- */
+
+  async function swPost(msg) {
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      const w = reg.active || reg.waiting || reg.installing;
+      if (w) w.postMessage(msg);
+    } catch (e) {}
+  }
+
+  function notifyAllowedAt(ts) {
+    if (!S.state.notify) return false;
+    if (!('Notification' in window) || Notification.permission !== 'granted') return false;
+    if (S.inQuietHours(new Date(ts))) return false;
+    return true;
+  }
+
+  function scheduleNotifications(t) {
+    if (!S.state.notify) return;
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+    const warnAt = t.endsAt - 30000;
+    const endAt = t.endsAt;
+    const endAllowed = notifyAllowedAt(endAt);
+    const warnAllowed = notifyAllowedAt(warnAt) && warnAt > Date.now();
+
+    if (warnAllowed && S.canNotify()) {
+      S.markNotify();
+      warnTimer = setTimeout(() => {
+        if (!timer) return;
+        showNotification(t.label + ' 30초 남았어요. 곧 끝난다고 알려주세요.', 'warn', t.start);
+      }, Math.max(0, warnAt - Date.now()));
+      swPost({ type: 'schedule', at: warnAt, body: t.label + ' 30초 남았어요.', tag: 'miri-' + t.start });
+    }
+
+    if (endAllowed && S.canNotify()) {
+      S.markNotify();
+      swPost({ type: 'schedule', at: endAt, body: t.label + ' 시간이 다 됐어요.', tag: 'miri-' + t.start + '-end' });
+    }
+  }
+
+  function showNotification(body, kind, key) {
+    try {
+      const n = new Notification('미리', {
+        body,
+        tag: 'miri-' + key + (kind === 'warn' ? '' : '-end'),
+        badge: 'icons/icon-192.png',
+        icon: 'icons/icon-192.png',
+        silent: false
+      });
+      n.onclick = () => { window.focus(); n.close(); };
+    } catch (e) {}
+  }
+
+  /* ---------- 화면 잠금 방지 ---------- */
+
+  async function requestWakeLock() {
+    try {
+      if ('wakeLock' in navigator && document.visibilityState === 'visible') {
+        wakeLock = await navigator.wakeLock.request('screen');
+      }
+    } catch (e) {}
+  }
+
+  function releaseWakeLock() {
+    try {
+      if (wakeLock) { wakeLock.release(); wakeLock = null; }
+    } catch (e) {}
+  }
+
+  /* ================= 사진 카드 ================= */
+
+  function readFileAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onload = () => resolve(fr.result);
+      fr.onerror = reject;
+      fr.readAsDataURL(file);
+    });
+  }
+
+  function resizeImage(dataUrl, max) {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, max / Math.max(img.width, img.height));
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        try { resolve(canvas.toDataURL('image/jpeg', 0.82)); }
+        catch (e) { resolve(dataUrl); }
+      };
+      img.onerror = () => resolve(dataUrl);
+      img.src = dataUrl;
+    });
+  }
+
+  async function addPhoto(file) {
+    if (!file) return;
+    const raw = await readFileAsDataURL(file);
+    const small = await resizeImage(raw, 512);
+    const id = S.uid('img_');
+    const ok = await S.putCard(id, small);
+    if (!ok) { toast('사진을 저장하지 못했어요'); return; }
+    mediaCache[id] = small;
+    S.addCardMeta(photoSetKey, '내 사진', id);
+    S.track('photo_add', { setKey: photoSetKey });
+    renderPhotoSection();
+    toast('카드를 만들었어요');
+  }
+
+  /* ================= 내보내기 ================= */
+
+  function download(filename, content, type) {
+    const blob = new Blob([content], { type: type || 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 800);
   }
 
   /* ================= 이벤트 ================= */
@@ -1313,26 +2796,61 @@ const MiriStore = (() => {
       if (b) go(b.dataset.tab);
     });
 
+    // 시트
     $('#sheet-grid').addEventListener('click', e => {
       const b = e.target.closest('button[data-min]');
-      if (!b) return;
-      const min = Number(b.dataset.min);
-      const cb = sheetCb;
-      closeSheet();
-      if (cb) cb(min);
+      if (b) sheetPick(Number(b.dataset.min));
+    });
+    $('#sheet-custom-go').addEventListener('click', () => {
+      const v = Number($('#sheet-custom').value);
+      if (!v) { toast('분을 입력해 주세요'); return; }
+      sheetPick(v);
     });
     $('#sheet-cancel').addEventListener('click', closeSheet);
     $('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet') closeSheet(); });
 
-    $$('#set-age button').forEach(b => {
-      b.addEventListener('click', () => {
-        S.state.age = Number(b.dataset.age);
-        S.save();
-        renderSettings();
-        toast('저장했어요');
-      });
+    // 확인 다이얼로그
+    $('#confirm-ok').addEventListener('click', () => {
+      const inp = $('#confirm-input');
+      closeConfirm(inp.hidden ? true : inp.value);
+    });
+    $('#confirm-cancel').addEventListener('click', () => closeConfirm(inpHiddenValue()));
+    $('#confirm').addEventListener('click', e => {
+      if (e.target.id === 'confirm') closeConfirm(inpHiddenValue());
+    });
+    function inpHiddenValue() {
+      const inp = $('#confirm-input');
+      return inp.hidden ? false : null;
+    }
+
+    // 설정: 아이
+    $('#set-age').addEventListener('click', e => {
+      const b = e.target.closest('button[data-age]');
+      if (!b) return;
+      const age = Number(b.dataset.age);
+      S.state.age = age;
+      S.updateChild(S.activeChild().id, { age });
+      renderSettings();
+      toast('저장했어요');
     });
 
+    $('#child-add').addEventListener('click', async () => {
+      if (!S.canAddChild()) {
+        if (S.children().length >= 2) { toast('아이는 두 명까지예요'); return; }
+        showPaywall('child');
+        return;
+      }
+      const name = await askText({ title: '아이 추가', text: '이름이나 별명 (최대 8자)', ok: '추가', placeholder: '둘째' });
+      if (!name || !name.trim()) return;
+      const c = S.addChild({ name: name.trim().slice(0, 8), age: S.state.age });
+      if (c) {
+        S.setActiveChild(c.id);
+        renderSettings();
+        toast('아이를 추가했어요');
+      }
+    });
+
+    // 설정: 소리/진동/테마
     $('#set-sound').addEventListener('click', () => {
       S.state.sound = !S.state.sound;
       S.save();
@@ -1340,8 +2858,26 @@ const MiriStore = (() => {
       if (S.state.sound) chime('pick');
     });
 
+    $('#set-haptics').addEventListener('click', () => {
+      S.state.haptics = !S.state.haptics;
+      S.save();
+      renderSettings();
+      if (S.state.haptics) buzz(40);
+    });
+
+    $('#set-theme').addEventListener('click', e => {
+      const b = e.target.closest('button[data-theme]');
+      if (!b) return;
+      S.state.theme = b.dataset.theme;
+      S.save();
+      applyTheme();
+      renderSettings();
+    });
+
+    // 설정: 알림
     $('#set-notify').addEventListener('click', async () => {
       if (!('Notification' in window)) { toast('이 브라우저는 알림을 지원하지 않아요'); return; }
+      if (Notification.permission === 'denied') { toast('브라우저 설정에서 알림을 허용해 주세요'); return; }
       if (Notification.permission === 'granted') {
         S.state.notify = !S.state.notify;
         S.save();
@@ -1351,34 +2887,121 @@ const MiriStore = (() => {
       const perm = await Notification.requestPermission();
       S.state.notify = perm === 'granted';
       S.save();
+      S.track('notify_perm', { granted: perm === 'granted' });
       renderSettings();
       toast(perm === 'granted' ? '알림을 켰어요' : '알림이 막혀 있어요');
     });
 
-    $('#set-reset').addEventListener('click', () => {
-      S.reset();
-      toast('초기화했어요');
-      go('onboarding');
-      obShow(1);
+    // 설정: 프리셋 추가
+    $('#preset-add').addEventListener('click', async () => {
+      if (!S.canAddPreset()) { showPaywall('preset'); return; }
+      const name = await askText({ title: '전환 추가', text: '예: 학원, 할머니집', ok: '다음', placeholder: '학원' });
+      if (!name || !name.trim()) return;
+      const p = S.addPreset({ label: name.trim().slice(0, 12), icon: '⏳', minutes: 10, time: '18:00' });
+      renderSettings();
+      toast(p.label + ' 추가했어요');
     });
 
-    // 카드 화면
+    // 설정: 데이터
+    $('#data-export').addEventListener('click', () => {
+      const json = JSON.stringify(S.dump(), null, 2);
+      download('miri-' + S.dayKey() + '.json', json, 'application/json');
+      toast('JSON으로 내보냈어요');
+    });
+
+    $('#data-export-csv').addEventListener('click', () => {
+      download('miri-' + S.dayKey() + '.csv', S.toCSV(), 'text/csv;charset=utf-8');
+      toast('CSV로 내보냈어요');
+    });
+
+    $('#data-import').addEventListener('click', () => $('#import-file').click());
+    $('#import-file').addEventListener('change', async e => {
+      const file = e.target.files && e.target.files[0];
+      e.target.value = '';
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const added = S.importJSON(JSON.parse(text));
+        go('records');
+        toast(added + '건을 불러왔어요');
+      } catch (err) {
+        toast('불러오지 못했어요: ' + (err.message || '형식 오류'));
+      }
+    });
+
+    $('#set-reset').addEventListener('click', async () => {
+      const ok = await askConfirm({
+        title: '모두 지울까요?',
+        text: '기록·사진 카드·설정이 이 기기에서 사라집니다. 되돌릴 수 없어요.',
+        ok: '지우기'
+      });
+      if (!ok) return;
+      const ids = [];
+      Object.values(S.state.cards).forEach(arr => arr.forEach(c => ids.push(c.id)));
+      for (const id of ids) await S.delCard(id);
+      mediaCache = {};
+      S.reset();
+      applyTheme();
+      go('onboarding');
+      obShow(1);
+      toast('초기화했어요');
+    });
+
+    // 카드
+    $('#photo-add').addEventListener('click', () => {
+      if (!S.isPlus()) { showPaywall('photo'); return; }
+      $('#photo-file').click();
+    });
+    $('#photo-file').addEventListener('change', e => {
+      const file = e.target.files && e.target.files[0];
+      e.target.value = '';
+      addPhoto(file);
+    });
+
     $('#choice-exit').addEventListener('click', () => { closeFull(); renderCards(); });
     $('#choice-close').addEventListener('click', () => { closeFull(); renderCards(); });
     $('#choice-again').addEventListener('click', () => {
       if (choiceState) showChoicePair(choiceState.set.key);
     });
 
-    // 아이 화면 종료 패널
-    $('#end-done').addEventListener('click', () => { chime('pick'); closeKid(); });
+    // 아이 화면
+    $('#end-done').addEventListener('click', () => {
+      chime('pick');
+      if (endMode === 'routine' && routineRun) {
+        routineRun.index += 1;
+        clearTimeout(endPanelTimer);
+        endPanelTimer = null;
+        $('#end-panel').className = 'end-panel';
+        startRoutineStep();
+        return;
+      }
+      closeKid();
+    });
 
     $('#end-extend').addEventListener('click', () => {
+      if (endMode === 'routine') {
+        if (endPanelLogId) S.setLogOutcome(endPanelLogId, 'abort');
+        toast('루틴을 멈췄어요');
+        closeKid();
+        return;
+      }
+      if (extendUsed) return;
+      extendUsed = true;
       if (endPanelLogId) S.setLogOutcome(endPanelLogId, 'extend');
+      S.track('timer_extend', { preset: timer ? timer.presetKey : null, count: 1 });
+
       const label = $('#hero-lb').textContent;
+      const prev = timer;
+      const preset = S.nextPreset();
       closeKid();
       setTimeout(() => {
-        const p = S.nextPreset();
-        startTimer({ label: p ? p.label : label, icon: p ? p.icon : '⏳', minutes: 3, presetKey: p ? p.key : null });
+        startTimer({
+          label: prev ? prev.label : label,
+          icon: prev ? prev.icon : '⏳',
+          minutes: 3,
+          presetKey: prev ? prev.presetKey : (preset ? preset.key : null)
+        });
+        extendUsed = true;
       }, 260);
     });
 
@@ -1390,9 +3013,13 @@ const MiriStore = (() => {
       exitBtn.classList.add('holding');
       holdTimer = setTimeout(() => {
         exitBtn.classList.remove('holding');
-        if (timer) stopTimer(false);
-        closeKid();
-        toast('중단으로 기록했어요');
+        if (timer) {
+          stopTimer(false);
+          closeKid();
+          toast('중단으로 기록했어요');
+        } else {
+          closeKid();
+        }
       }, 1500);
     };
     const endHold = () => {
@@ -1406,22 +3033,87 @@ const MiriStore = (() => {
     exitBtn.addEventListener('pointerleave', endHold);
     exitBtn.addEventListener('pointercancel', endHold);
 
-    document.addEventListener('visibilitychange', () => {
-      if (!timer) return;
-      if (document.visibilityState === 'visible') tick();
+    // 설치 배너
+    $('#install-banner-x').addEventListener('click', () => {
+      S.state.installHintSeen = true;
+      S.save();
+      $('#install-banner').hidden = true;
     });
+    $('#install-banner-go').addEventListener('click', async () => {
+      S.state.installHintSeen = true;
+      S.save();
+      $('#install-banner').hidden = true;
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        try { await deferredPrompt.userChoice; } catch (e) {}
+        deferredPrompt = null;
+        S.track('install_prompt', { action: 'accepted' });
+      } else {
+        toast(isIOS() ? 'Safari 공유 → 홈 화면에 추가' : '브라우저 메뉴 → 홈 화면에 추가');
+        S.track('install_prompt', { action: 'guide' });
+      }
+    });
+
+    // 페이월
+    $('#paywall-cta').addEventListener('click', () => {
+      S.setPlan('plus');
+      toast('Plus를 켰어요 (베타)');
+      go(paywallReturn);
+    });
+    $('#paywall-later').addEventListener('click', () => go(paywallReturn));
+    $('#paywall-back').addEventListener('click', () => go(paywallReturn));
+
+    // 상태 변화
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') persist();
+      if (!timer) return;
+      if (document.visibilityState === 'visible') {
+        tick();
+        requestWakeLock();
+      }
+    });
+
+    window.addEventListener('online', () => { $('#offline-bar').hidden = true; });
+    window.addEventListener('offline', () => { $('#offline-bar').hidden = false; });
+
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
+    // 다중 탭 동기화
+    window.addEventListener('storage', e => {
+      if (e.key !== 'miri.v2') return;
+      if (currentView === 'home') renderHome();
+      if (currentView === 'records') renderRecords();
+    });
+
+    darkMedia.addEventListener('change', () => { if ((S.state.theme || 'auto') === 'auto') applyTheme(); });
+    reduceMotion.addEventListener('change', applyMotion);
   }
 
   /* ================= 시작 ================= */
 
-  function boot() {
+  async function boot() {
+    applyTheme();
+    applyMotion();
+    mediaCache = await S.allCards();
+
     obInit();
     bind();
 
+    $('#offline-bar').hidden = navigator.onLine;
+
+    const resumed = restorePending();
+
     if (!S.state.onboarded) {
       go('onboarding');
-    } else {
+    } else if (!resumed) {
       go('home');
+    }
+
+    if (S.memoryOnly) {
+      setTimeout(() => toast('이 브라우저는 기록을 저장하지 못해요'), 900);
     }
 
     if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
