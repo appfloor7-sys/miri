@@ -197,7 +197,10 @@
     <div class="section">
       <div class="section-head"><h2 class="h2">소리와 화면</h2></div>
       <div class="set-group">
-        <div class="set-item"><span class="k">소리</span><button class="switch" id="set-sound" aria-label="소리"></button></div>
+        <div class="set-item">
+          <span class="k">소리<small>절반 · 30초 · 끝날 때</small></span>
+          <button class="switch" id="set-sound" aria-label="소리"></button>
+        </div>
         <div class="set-item" id="haptics-row">
           <span class="k">진동</span><button class="switch" id="set-haptics" aria-label="진동"></button>
         </div>
@@ -292,6 +295,7 @@
       <div class="bunny" id="bunny">🐰</div>
       <div class="door" id="door">🚪</div>
     </div>
+    <div class="kid-cue" id="kid-cue" role="status" aria-live="polite"></div>
     <button class="kid-exit" id="kid-exit" aria-label="나가기">✕</button>
     <div class="end-panel" id="end-panel">
       <div class="end-hint" id="end-hint">부모님만</div>

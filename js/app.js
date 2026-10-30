@@ -114,6 +114,10 @@
         tone(523.25, 0, 0.5, 0.16);
         tone(659.25, 0.13, 0.5, 0.14);
         tone(783.99, 0.26, 0.7, 0.12);
+      } else if (kind === 'mid') {
+        // 절반을 지났다는 신호. 경보가 아니라 방 안의 여린 종소리여야 한다.
+        tone(392, 0, 0.9, 0.055);
+        tone(523.25, 0.3, 0.9, 0.04);
       } else if (kind === 'pick') {
         tone(784, 0, 0.12, 0.12);
         tone(1046.5, 0.09, 0.2, 0.10);
@@ -122,6 +126,22 @@
         tone(1174.66, 0.16, 0.3, 0.08);
       }
     } catch (e) {}
+  }
+
+  // 아이 화면 위에 잠깐 떠오르는 한 줄. 읽는 사람은 부모다.
+  let cueTimer = null;
+  function cue(text, ms = 2600) {
+    const el = $('#kid-cue');
+    if (!el) return;
+    clearTimeout(cueTimer);
+    el.textContent = text;
+    el.classList.add('on');
+    cueTimer = setTimeout(() => el.classList.remove('on'), ms);
+  }
+  function clearCue() {
+    const el = $('#kid-cue');
+    clearTimeout(cueTimer);
+    if (el) { el.classList.remove('on'); el.textContent = ''; }
   }
 
   function buzz(pattern) {
@@ -755,6 +775,7 @@
       stepIndex: opts.stepIndex === undefined ? null : opts.stepIndex,
       childId: S.state.activeChildId,
       warned: false,
+      midDone: false,
       isTrial: !!opts.isTrial
     };
     extendUsed = false;
@@ -811,6 +832,18 @@
     $('#sand').style.height = fillPct(pct);
     $('#bunny').style.bottom = fillPct(pct);
 
+    // 절반을 지나는 순간: 아이가 "마음의 준비"를 시작할 수 있는 첫 신호.
+    // 2분 미만이면 30초 예고와 붙어버리므로 생략한다.
+    const half = timer.totalMs / 2;
+    if (timer.totalMs >= 120000 && remain <= half && remain > 30000 && !timer.midDone) {
+      timer.midDone = true;
+      persist();
+      chime('mid');
+      buzz([40, 70, 40]);
+      cue('절반 지났어요');
+      S.track('timer_mid', { preset: timer.presetKey });
+    }
+
     if (remain <= 30000 && remain > 0 && !timer.warned) {
       timer.warned = true;
       persist();
@@ -821,6 +854,7 @@
       }
       chime('soon');
       buzz([120, 80, 120]);
+      cue('곧 끝나요');
       S.track('timer_warn30', { preset: timer.presetKey });
     }
 
@@ -834,6 +868,7 @@
     ticking = null;
     clearTimeout(warnTimer);
     warnTimer = null;
+    clearCue();
 
     const log = S.addLog({
       label: t.label, icon: t.icon, minutes: t.minutes,
@@ -891,6 +926,7 @@
     routineRun = null;
     $('#end-panel').className = 'end-panel';
     $('#routine-dots').innerHTML = '';
+    clearCue();
     $('#view-kid').classList.remove('active');
     releaseWakeLock();
     closeFull();
@@ -949,6 +985,7 @@
         presetKey: p.presetKey, routineId: p.routineId, stepIndex: p.stepIndex,
         childId: p.childId || S.state.activeChildId,
         warned: now <= p.endsAt - 30000,
+        midDone: now <= p.endsAt - (p.totalMs || p.minutes * 60000) / 2,
         isTrial: !!p.isTrial
       };
       extendUsed = false;
@@ -1325,33 +1362,47 @@
       }, 260);
     });
 
-    // 1.5초 길게 눌러야 나가짐
+    // 1.5초 길게 눌러야 나가짐 — 아이가 실수로 끄지 못하게 하는 장치.
+    // 다만 "눌러도 아무 일이 없다"는 고장으로 보이므로, 누르는 동안 채워지는
+    // 표시와 짧게 눌렀을 때의 안내를 함께 준다.
     const exitBtn = $('#kid-exit');
     let holdTimer = null;
 
-    const startHold = () => {
-      exitBtn.classList.add('holding');
-      holdTimer = setTimeout(() => {
-        exitBtn.classList.remove('holding');
-        if (timer) {
-          stopTimer(false);
-          closeKid();
-          toast('중단으로 기록했어요');
-        } else {
-          closeKid();
-        }
-      }, 1500);
-    };
-    const endHold = () => {
-      exitBtn.classList.remove('holding');
+    const doExit = () => {
       clearTimeout(holdTimer);
       holdTimer = null;
+      exitBtn.classList.remove('holding');
+      if (timer) {
+        stopTimer(false);
+        closeKid();
+        toast('중단으로 기록했어요');
+      } else {
+        closeKid();
+      }
+    };
+
+    const startHold = () => {
+      clearTimeout(holdTimer);
+      exitBtn.classList.add('holding');
+      holdTimer = setTimeout(doExit, 1500);
+    };
+
+    const endHold = ({ hint }) => {
+      const wasHolding = exitBtn.classList.contains('holding');
+      clearTimeout(holdTimer);
+      holdTimer = null;
+      exitBtn.classList.remove('holding');
+      if (hint && wasHolding && timer) toast('1.5초 길게 누르면 나갈 수 있어요');
     };
 
     exitBtn.addEventListener('pointerdown', startHold);
-    exitBtn.addEventListener('pointerup', endHold);
-    exitBtn.addEventListener('pointerleave', endHold);
-    exitBtn.addEventListener('pointercancel', endHold);
+    exitBtn.addEventListener('pointerup', () => endHold({ hint: true }));
+    exitBtn.addEventListener('pointerleave', () => endHold({ hint: false }));
+    exitBtn.addEventListener('pointercancel', () => endHold({ hint: false }));
+    // 길게 누르기는 아이를 위한 장치다. 키보드로 조작하는 부모는 바로 나간다.
+    exitBtn.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); doExit(); }
+    });
 
     // 설치 배너
     $('#install-banner-x').addEventListener('click', () => {
